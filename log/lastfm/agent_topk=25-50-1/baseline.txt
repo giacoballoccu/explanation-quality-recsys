@@ -1,0 +1,13 @@
+--- Baseline---
+Recommandation quality:
+Average ndcg Male noOfUsers 10993: 0.087  | Average ndcg Female noOfUsers 3548: 0.082  | Average ndcg Overall noOfUsers 14541: 0.086  | 
+Average hr Male noOfUsers 10993: 0.183  | Average hr Female noOfUsers 3548: 0.178  | Average hr Overall noOfUsers 14541: 0.182  | 
+Average precision Male noOfUsers 10993: 0.027  | Average precision Female noOfUsers 3548: 0.026  | Average precision Overall noOfUsers 14541: 0.027  | 
+Average recall Male noOfUsers 10993: 0.010  | Average recall Female noOfUsers 3548: 0.011  | Average recall Overall noOfUsers 14541: 0.010  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.596 | Female: 0.602 | Overall: 0.597
+Average explaination serentipety after Male: 0.342 | Female: 0.336 | Overall: 0.341
+Average diversity after Male: 0.130 | Female: 0.131 | Overall: 0.130
+
+
