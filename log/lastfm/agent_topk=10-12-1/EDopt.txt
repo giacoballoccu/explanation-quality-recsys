@@ -1,0 +1,274 @@
+Performing Alpha-Optimization...
+--- AFTER EDopt optimization with alpha=0---
+Recommandation quality:
+Average ndcg_bounded Male: 0.108  | Average ndcg_bounded Female: 0.105  | Average ndcg_bounded Overall: 0.108  | 
+Average hr Male: 0.166  | Average hr Female: 0.158  | Average hr Overall: 0.164  | 
+Average precision Male: 0.024  | Average precision Female: 0.022  | Average precision Overall: 0.023  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.595 | Female: 0.602 | Overall: 0.596
+Average explaination serentipety after Male: 0.341 | Female: 0.333 | Overall: 0.339
+Average diversity after Male: 0.136 | Female: 0.135 | Overall: 0.136
+
+
+--- AFTER EDopt optimization with alpha=0.05---
+Recommandation quality:
+Average ndcg_bounded Male: 0.110  | Average ndcg_bounded Female: 0.106  | Average ndcg_bounded Overall: 0.109  | 
+Average hr Male: 0.169  | Average hr Female: 0.160  | Average hr Overall: 0.167  | 
+Average precision Male: 0.024  | Average precision Female: 0.022  | Average precision Overall: 0.023  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.595 | Female: 0.601 | Overall: 0.596
+Average explaination serentipety after Male: 0.349 | Female: 0.341 | Overall: 0.347
+Average diversity after Male: 0.173 | Female: 0.174 | Overall: 0.173
+
+
+--- AFTER EDopt optimization with alpha=0.1---
+Recommandation quality:
+Average ndcg_bounded Male: 0.110  | Average ndcg_bounded Female: 0.106  | Average ndcg_bounded Overall: 0.109  | 
+Average hr Male: 0.171  | Average hr Female: 0.160  | Average hr Overall: 0.168  | 
+Average precision Male: 0.024  | Average precision Female: 0.022  | Average precision Overall: 0.024  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.594 | Female: 0.601 | Overall: 0.596
+Average explaination serentipety after Male: 0.356 | Female: 0.348 | Overall: 0.355
+Average diversity after Male: 0.199 | Female: 0.200 | Overall: 0.199
+
+
+--- AFTER EDopt optimization with alpha=0.15---
+Recommandation quality:
+Average ndcg_bounded Male: 0.110  | Average ndcg_bounded Female: 0.105  | Average ndcg_bounded Overall: 0.109  | 
+Average hr Male: 0.169  | Average hr Female: 0.158  | Average hr Overall: 0.167  | 
+Average precision Male: 0.024  | Average precision Female: 0.022  | Average precision Overall: 0.023  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.593 | Female: 0.600 | Overall: 0.595
+Average explaination serentipety after Male: 0.365 | Female: 0.356 | Overall: 0.362
+Average diversity after Male: 0.225 | Female: 0.225 | Overall: 0.225
+
+
+--- AFTER EDopt optimization with alpha=0.2---
+Recommandation quality:
+Average ndcg_bounded Male: 0.110  | Average ndcg_bounded Female: 0.103  | Average ndcg_bounded Overall: 0.108  | 
+Average hr Male: 0.169  | Average hr Female: 0.155  | Average hr Overall: 0.166  | 
+Average precision Male: 0.024  | Average precision Female: 0.021  | Average precision Overall: 0.023  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.593 | Female: 0.599 | Overall: 0.594
+Average explaination serentipety after Male: 0.372 | Female: 0.363 | Overall: 0.370
+Average diversity after Male: 0.247 | Female: 0.249 | Overall: 0.248
+
+
+--- AFTER EDopt optimization with alpha=0.25---
+Recommandation quality:
+Average ndcg_bounded Male: 0.109  | Average ndcg_bounded Female: 0.103  | Average ndcg_bounded Overall: 0.108  | 
+Average hr Male: 0.167  | Average hr Female: 0.154  | Average hr Overall: 0.164  | 
+Average precision Male: 0.023  | Average precision Female: 0.021  | Average precision Overall: 0.023  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.599 | Overall: 0.594
+Average explaination serentipety after Male: 0.376 | Female: 0.369 | Overall: 0.374
+Average diversity after Male: 0.263 | Female: 0.268 | Overall: 0.264
+
+
+--- AFTER EDopt optimization with alpha=0.3---
+Recommandation quality:
+Average ndcg_bounded Male: 0.108  | Average ndcg_bounded Female: 0.104  | Average ndcg_bounded Overall: 0.107  | 
+Average hr Male: 0.166  | Average hr Female: 0.154  | Average hr Overall: 0.163  | 
+Average precision Male: 0.023  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.594
+Average explaination serentipety after Male: 0.378 | Female: 0.371 | Overall: 0.376
+Average diversity after Male: 0.273 | Female: 0.279 | Overall: 0.275
+
+
+--- AFTER EDopt optimization with alpha=0.35---
+Recommandation quality:
+Average ndcg_bounded Male: 0.108  | Average ndcg_bounded Female: 0.104  | Average ndcg_bounded Overall: 0.107  | 
+Average hr Male: 0.165  | Average hr Female: 0.153  | Average hr Overall: 0.162  | 
+Average precision Male: 0.023  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.594
+Average explaination serentipety after Male: 0.379 | Female: 0.372 | Overall: 0.377
+Average diversity after Male: 0.281 | Female: 0.286 | Overall: 0.282
+
+
+--- AFTER EDopt optimization with alpha=0.4---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.103  | Average ndcg_bounded Overall: 0.106  | 
+Average hr Male: 0.164  | Average hr Female: 0.151  | Average hr Overall: 0.161  | 
+Average precision Male: 0.023  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.380 | Female: 0.372 | Overall: 0.378
+Average diversity after Male: 0.287 | Female: 0.292 | Overall: 0.288
+
+
+--- AFTER EDopt optimization with alpha=0.45---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.103  | Average ndcg_bounded Overall: 0.106  | 
+Average hr Male: 0.163  | Average hr Female: 0.151  | Average hr Overall: 0.160  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.597 | Overall: 0.593
+Average explaination serentipety after Male: 0.380 | Female: 0.373 | Overall: 0.378
+Average diversity after Male: 0.292 | Female: 0.298 | Overall: 0.294
+
+
+--- AFTER EDopt optimization with alpha=0.5---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.106  | 
+Average hr Male: 0.163  | Average hr Female: 0.150  | Average hr Overall: 0.160  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.380 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.296 | Female: 0.302 | Overall: 0.297
+
+
+--- AFTER EDopt optimization with alpha=0.55---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.106  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.305 | Overall: 0.299
+
+
+--- AFTER EDopt optimization with alpha=0.6---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.105  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.305 | Overall: 0.300
+
+
+--- AFTER EDopt optimization with alpha=0.65---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.105  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.306 | Overall: 0.300
+
+
+--- AFTER EDopt optimization with alpha=0.7---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.105  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.306 | Overall: 0.300
+
+
+--- AFTER EDopt optimization with alpha=0.75---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.105  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.306 | Overall: 0.300
+
+
+--- AFTER EDopt optimization with alpha=0.8---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.105  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.306 | Overall: 0.300
+
+
+--- AFTER EDopt optimization with alpha=0.85---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.105  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.306 | Overall: 0.300
+
+
+--- AFTER EDopt optimization with alpha=0.9---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.105  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.306 | Overall: 0.300
+
+
+--- AFTER EDopt optimization with alpha=0.95---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.105  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.306 | Overall: 0.300
+
+
+--- AFTER EDopt optimization with alpha=1.0---
+Recommandation quality:
+Average ndcg_bounded Male: 0.107  | Average ndcg_bounded Female: 0.102  | Average ndcg_bounded Overall: 0.105  | 
+Average hr Male: 0.162  | Average hr Female: 0.150  | Average hr Overall: 0.159  | 
+Average precision Male: 0.022  | Average precision Female: 0.021  | Average precision Overall: 0.022  | 
+Average recall Male: 0.009  | Average recall Female: 0.009  | Average recall Overall: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.598 | Overall: 0.593
+Average explaination serentipety after Male: 0.381 | Female: 0.373 | Overall: 0.379
+Average diversity after Male: 0.298 | Female: 0.306 | Overall: 0.300
+
+

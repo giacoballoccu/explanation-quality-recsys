@@ -1,0 +1,274 @@
+Performing Alpha-Optimization...
+--- AFTER ETRopt optimization with alpha=0---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.122  | Average ndcg Female noOfUsers 3556: 0.121  | Average ndcg Overall noOfUsers 14563: 0.122  | 
+Average hr Male noOfUsers 11007: 0.199  | Average hr Female noOfUsers 3556: 0.196  | Average hr Overall noOfUsers 14563: 0.198  | 
+Average precision Male noOfUsers 11007: 0.030  | Average precision Female noOfUsers 3556: 0.028  | Average precision Overall noOfUsers 14563: 0.030  | 
+Average recall Male noOfUsers 11007: 0.010  | Average recall Female noOfUsers 3556: 0.012  | Average recall Overall noOfUsers 14563: 0.011  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.592 | Female: 0.597 | Overall: 0.593
+Average explaination serentipety after Male: 0.316 | Female: 0.308 | Overall: 0.314
+Average diversity after Male: 0.136 | Female: 0.130 | Overall: 0.134
+
+
+--- AFTER ETRopt optimization with alpha=0.05---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.121  | Average ndcg Female noOfUsers 3556: 0.120  | Average ndcg Overall noOfUsers 14563: 0.121  | 
+Average hr Male noOfUsers 11007: 0.197  | Average hr Female noOfUsers 3556: 0.191  | Average hr Overall noOfUsers 14563: 0.196  | 
+Average precision Male noOfUsers 11007: 0.030  | Average precision Female noOfUsers 3556: 0.028  | Average precision Overall noOfUsers 14563: 0.029  | 
+Average recall Male noOfUsers 11007: 0.010  | Average recall Female noOfUsers 3556: 0.012  | Average recall Overall noOfUsers 14563: 0.011  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.861 | Female: 0.868 | Overall: 0.863
+Average explaination serentipety after Male: 0.318 | Female: 0.310 | Overall: 0.316
+Average diversity after Male: 0.132 | Female: 0.127 | Overall: 0.131
+
+
+--- AFTER ETRopt optimization with alpha=0.1---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.121  | Average ndcg Female noOfUsers 3556: 0.120  | Average ndcg Overall noOfUsers 14563: 0.120  | 
+Average hr Male noOfUsers 11007: 0.196  | Average hr Female noOfUsers 3556: 0.190  | Average hr Overall noOfUsers 14563: 0.195  | 
+Average precision Male noOfUsers 11007: 0.030  | Average precision Female noOfUsers 3556: 0.028  | Average precision Overall noOfUsers 14563: 0.029  | 
+Average recall Male noOfUsers 11007: 0.010  | Average recall Female noOfUsers 3556: 0.012  | Average recall Overall noOfUsers 14563: 0.011  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.895 | Female: 0.901 | Overall: 0.897
+Average explaination serentipety after Male: 0.322 | Female: 0.314 | Overall: 0.320
+Average diversity after Male: 0.134 | Female: 0.129 | Overall: 0.133
+
+
+--- AFTER ETRopt optimization with alpha=0.15---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.119  | Average ndcg Female noOfUsers 3556: 0.118  | Average ndcg Overall noOfUsers 14563: 0.119  | 
+Average hr Male noOfUsers 11007: 0.193  | Average hr Female noOfUsers 3556: 0.189  | Average hr Overall noOfUsers 14563: 0.192  | 
+Average precision Male noOfUsers 11007: 0.029  | Average precision Female noOfUsers 3556: 0.027  | Average precision Overall noOfUsers 14563: 0.029  | 
+Average recall Male noOfUsers 11007: 0.010  | Average recall Female noOfUsers 3556: 0.012  | Average recall Overall noOfUsers 14563: 0.010  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.921 | Female: 0.925 | Overall: 0.922
+Average explaination serentipety after Male: 0.326 | Female: 0.318 | Overall: 0.324
+Average diversity after Male: 0.136 | Female: 0.131 | Overall: 0.135
+
+
+--- AFTER ETRopt optimization with alpha=0.2---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.119  | Average ndcg Female noOfUsers 3556: 0.115  | Average ndcg Overall noOfUsers 14563: 0.118  | 
+Average hr Male noOfUsers 11007: 0.192  | Average hr Female noOfUsers 3556: 0.182  | Average hr Overall noOfUsers 14563: 0.190  | 
+Average precision Male noOfUsers 11007: 0.029  | Average precision Female noOfUsers 3556: 0.026  | Average precision Overall noOfUsers 14563: 0.028  | 
+Average recall Male noOfUsers 11007: 0.010  | Average recall Female noOfUsers 3556: 0.011  | Average recall Overall noOfUsers 14563: 0.010  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.938 | Female: 0.942 | Overall: 0.939
+Average explaination serentipety after Male: 0.330 | Female: 0.322 | Overall: 0.328
+Average diversity after Male: 0.139 | Female: 0.133 | Overall: 0.137
+
+
+--- AFTER ETRopt optimization with alpha=0.25---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.119  | Average ndcg Female noOfUsers 3556: 0.114  | Average ndcg Overall noOfUsers 14563: 0.117  | 
+Average hr Male noOfUsers 11007: 0.191  | Average hr Female noOfUsers 3556: 0.180  | Average hr Overall noOfUsers 14563: 0.188  | 
+Average precision Male noOfUsers 11007: 0.028  | Average precision Female noOfUsers 3556: 0.026  | Average precision Overall noOfUsers 14563: 0.028  | 
+Average recall Male noOfUsers 11007: 0.010  | Average recall Female noOfUsers 3556: 0.011  | Average recall Overall noOfUsers 14563: 0.010  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.949 | Female: 0.953 | Overall: 0.950
+Average explaination serentipety after Male: 0.333 | Female: 0.324 | Overall: 0.331
+Average diversity after Male: 0.140 | Female: 0.134 | Overall: 0.139
+
+
+--- AFTER ETRopt optimization with alpha=0.3---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.118  | Average ndcg Female noOfUsers 3556: 0.115  | Average ndcg Overall noOfUsers 14563: 0.117  | 
+Average hr Male noOfUsers 11007: 0.189  | Average hr Female noOfUsers 3556: 0.180  | Average hr Overall noOfUsers 14563: 0.187  | 
+Average precision Male noOfUsers 11007: 0.028  | Average precision Female noOfUsers 3556: 0.026  | Average precision Overall noOfUsers 14563: 0.028  | 
+Average recall Male noOfUsers 11007: 0.009  | Average recall Female noOfUsers 3556: 0.011  | Average recall Overall noOfUsers 14563: 0.010  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.957 | Female: 0.961 | Overall: 0.958
+Average explaination serentipety after Male: 0.335 | Female: 0.326 | Overall: 0.333
+Average diversity after Male: 0.141 | Female: 0.136 | Overall: 0.140
+
+
+--- AFTER ETRopt optimization with alpha=0.35---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.117  | Average ndcg Female noOfUsers 3556: 0.112  | Average ndcg Overall noOfUsers 14563: 0.116  | 
+Average hr Male noOfUsers 11007: 0.187  | Average hr Female noOfUsers 3556: 0.174  | Average hr Overall noOfUsers 14563: 0.184  | 
+Average precision Male noOfUsers 11007: 0.028  | Average precision Female noOfUsers 3556: 0.025  | Average precision Overall noOfUsers 14563: 0.027  | 
+Average recall Male noOfUsers 11007: 0.009  | Average recall Female noOfUsers 3556: 0.010  | Average recall Overall noOfUsers 14563: 0.010  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.963 | Female: 0.966 | Overall: 0.964
+Average explaination serentipety after Male: 0.337 | Female: 0.328 | Overall: 0.335
+Average diversity after Male: 0.143 | Female: 0.137 | Overall: 0.141
+
+
+--- AFTER ETRopt optimization with alpha=0.4---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.116  | Average ndcg Female noOfUsers 3556: 0.111  | Average ndcg Overall noOfUsers 14563: 0.115  | 
+Average hr Male noOfUsers 11007: 0.185  | Average hr Female noOfUsers 3556: 0.173  | Average hr Overall noOfUsers 14563: 0.182  | 
+Average precision Male noOfUsers 11007: 0.027  | Average precision Female noOfUsers 3556: 0.024  | Average precision Overall noOfUsers 14563: 0.027  | 
+Average recall Male noOfUsers 11007: 0.009  | Average recall Female noOfUsers 3556: 0.010  | Average recall Overall noOfUsers 14563: 0.010  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.968 | Female: 0.971 | Overall: 0.969
+Average explaination serentipety after Male: 0.339 | Female: 0.330 | Overall: 0.337
+Average diversity after Male: 0.144 | Female: 0.139 | Overall: 0.143
+
+
+--- AFTER ETRopt optimization with alpha=0.45---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.116  | Average ndcg Female noOfUsers 3556: 0.110  | Average ndcg Overall noOfUsers 14563: 0.114  | 
+Average hr Male noOfUsers 11007: 0.184  | Average hr Female noOfUsers 3556: 0.169  | Average hr Overall noOfUsers 14563: 0.180  | 
+Average precision Male noOfUsers 11007: 0.027  | Average precision Female noOfUsers 3556: 0.024  | Average precision Overall noOfUsers 14563: 0.026  | 
+Average recall Male noOfUsers 11007: 0.009  | Average recall Female noOfUsers 3556: 0.010  | Average recall Overall noOfUsers 14563: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.972 | Female: 0.974 | Overall: 0.972
+Average explaination serentipety after Male: 0.341 | Female: 0.333 | Overall: 0.339
+Average diversity after Male: 0.145 | Female: 0.140 | Overall: 0.144
+
+
+--- AFTER ETRopt optimization with alpha=0.5---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.114  | Average ndcg Female noOfUsers 3556: 0.109  | Average ndcg Overall noOfUsers 14563: 0.113  | 
+Average hr Male noOfUsers 11007: 0.181  | Average hr Female noOfUsers 3556: 0.168  | Average hr Overall noOfUsers 14563: 0.178  | 
+Average precision Male noOfUsers 11007: 0.026  | Average precision Female noOfUsers 3556: 0.024  | Average precision Overall noOfUsers 14563: 0.026  | 
+Average recall Male noOfUsers 11007: 0.009  | Average recall Female noOfUsers 3556: 0.010  | Average recall Overall noOfUsers 14563: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.975 | Female: 0.977 | Overall: 0.976
+Average explaination serentipety after Male: 0.343 | Female: 0.334 | Overall: 0.341
+Average diversity after Male: 0.146 | Female: 0.141 | Overall: 0.145
+
+
+--- AFTER ETRopt optimization with alpha=0.55---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.112  | Average ndcg Female noOfUsers 3556: 0.106  | Average ndcg Overall noOfUsers 14563: 0.111  | 
+Average hr Male noOfUsers 11007: 0.179  | Average hr Female noOfUsers 3556: 0.165  | Average hr Overall noOfUsers 14563: 0.175  | 
+Average precision Male noOfUsers 11007: 0.026  | Average precision Female noOfUsers 3556: 0.023  | Average precision Overall noOfUsers 14563: 0.025  | 
+Average recall Male noOfUsers 11007: 0.009  | Average recall Female noOfUsers 3556: 0.010  | Average recall Overall noOfUsers 14563: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.978 | Female: 0.980 | Overall: 0.978
+Average explaination serentipety after Male: 0.344 | Female: 0.336 | Overall: 0.342
+Average diversity after Male: 0.147 | Female: 0.142 | Overall: 0.146
+
+
+--- AFTER ETRopt optimization with alpha=0.6---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.112  | Average ndcg Female noOfUsers 3556: 0.105  | Average ndcg Overall noOfUsers 14563: 0.110  | 
+Average hr Male noOfUsers 11007: 0.177  | Average hr Female noOfUsers 3556: 0.163  | Average hr Overall noOfUsers 14563: 0.173  | 
+Average precision Male noOfUsers 11007: 0.026  | Average precision Female noOfUsers 3556: 0.023  | Average precision Overall noOfUsers 14563: 0.025  | 
+Average recall Male noOfUsers 11007: 0.009  | Average recall Female noOfUsers 3556: 0.010  | Average recall Overall noOfUsers 14563: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.980 | Female: 0.982 | Overall: 0.980
+Average explaination serentipety after Male: 0.346 | Female: 0.338 | Overall: 0.344
+Average diversity after Male: 0.148 | Female: 0.144 | Overall: 0.147
+
+
+--- AFTER ETRopt optimization with alpha=0.65---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.110  | Average ndcg Female noOfUsers 3556: 0.106  | Average ndcg Overall noOfUsers 14563: 0.109  | 
+Average hr Male noOfUsers 11007: 0.174  | Average hr Female noOfUsers 3556: 0.162  | Average hr Overall noOfUsers 14563: 0.171  | 
+Average precision Male noOfUsers 11007: 0.025  | Average precision Female noOfUsers 3556: 0.022  | Average precision Overall noOfUsers 14563: 0.024  | 
+Average recall Male noOfUsers 11007: 0.008  | Average recall Female noOfUsers 3556: 0.010  | Average recall Overall noOfUsers 14563: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.982 | Female: 0.984 | Overall: 0.982
+Average explaination serentipety after Male: 0.347 | Female: 0.339 | Overall: 0.345
+Average diversity after Male: 0.149 | Female: 0.145 | Overall: 0.148
+
+
+--- AFTER ETRopt optimization with alpha=0.7---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.109  | Average ndcg Female noOfUsers 3556: 0.104  | Average ndcg Overall noOfUsers 14563: 0.108  | 
+Average hr Male noOfUsers 11007: 0.170  | Average hr Female noOfUsers 3556: 0.158  | Average hr Overall noOfUsers 14563: 0.167  | 
+Average precision Male noOfUsers 11007: 0.024  | Average precision Female noOfUsers 3556: 0.022  | Average precision Overall noOfUsers 14563: 0.024  | 
+Average recall Male noOfUsers 11007: 0.008  | Average recall Female noOfUsers 3556: 0.010  | Average recall Overall noOfUsers 14563: 0.009  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.984 | Female: 0.985 | Overall: 0.984
+Average explaination serentipety after Male: 0.349 | Female: 0.341 | Overall: 0.347
+Average diversity after Male: 0.150 | Female: 0.147 | Overall: 0.150
+
+
+--- AFTER ETRopt optimization with alpha=0.75---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.106  | Average ndcg Female noOfUsers 3556: 0.102  | Average ndcg Overall noOfUsers 14563: 0.105  | 
+Average hr Male noOfUsers 11007: 0.165  | Average hr Female noOfUsers 3556: 0.156  | Average hr Overall noOfUsers 14563: 0.163  | 
+Average precision Male noOfUsers 11007: 0.024  | Average precision Female noOfUsers 3556: 0.022  | Average precision Overall noOfUsers 14563: 0.023  | 
+Average recall Male noOfUsers 11007: 0.008  | Average recall Female noOfUsers 3556: 0.009  | Average recall Overall noOfUsers 14563: 0.008  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.985 | Female: 0.987 | Overall: 0.986
+Average explaination serentipety after Male: 0.350 | Female: 0.342 | Overall: 0.349
+Average diversity after Male: 0.151 | Female: 0.148 | Overall: 0.151
+
+
+--- AFTER ETRopt optimization with alpha=0.8---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.104  | Average ndcg Female noOfUsers 3556: 0.101  | Average ndcg Overall noOfUsers 14563: 0.103  | 
+Average hr Male noOfUsers 11007: 0.162  | Average hr Female noOfUsers 3556: 0.154  | Average hr Overall noOfUsers 14563: 0.160  | 
+Average precision Male noOfUsers 11007: 0.023  | Average precision Female noOfUsers 3556: 0.021  | Average precision Overall noOfUsers 14563: 0.022  | 
+Average recall Male noOfUsers 11007: 0.008  | Average recall Female noOfUsers 3556: 0.009  | Average recall Overall noOfUsers 14563: 0.008  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.987 | Female: 0.988 | Overall: 0.987
+Average explaination serentipety after Male: 0.353 | Female: 0.345 | Overall: 0.351
+Average diversity after Male: 0.153 | Female: 0.150 | Overall: 0.152
+
+
+--- AFTER ETRopt optimization with alpha=0.85---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.102  | Average ndcg Female noOfUsers 3556: 0.100  | Average ndcg Overall noOfUsers 14563: 0.102  | 
+Average hr Male noOfUsers 11007: 0.159  | Average hr Female noOfUsers 3556: 0.152  | Average hr Overall noOfUsers 14563: 0.157  | 
+Average precision Male noOfUsers 11007: 0.022  | Average precision Female noOfUsers 3556: 0.021  | Average precision Overall noOfUsers 14563: 0.022  | 
+Average recall Male noOfUsers 11007: 0.008  | Average recall Female noOfUsers 3556: 0.009  | Average recall Overall noOfUsers 14563: 0.008  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.988 | Female: 0.989 | Overall: 0.988
+Average explaination serentipety after Male: 0.355 | Female: 0.346 | Overall: 0.353
+Average diversity after Male: 0.154 | Female: 0.152 | Overall: 0.154
+
+
+--- AFTER ETRopt optimization with alpha=0.9---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.099  | Average ndcg Female noOfUsers 3556: 0.095  | Average ndcg Overall noOfUsers 14563: 0.098  | 
+Average hr Male noOfUsers 11007: 0.154  | Average hr Female noOfUsers 3556: 0.146  | Average hr Overall noOfUsers 14563: 0.152  | 
+Average precision Male noOfUsers 11007: 0.021  | Average precision Female noOfUsers 3556: 0.020  | Average precision Overall noOfUsers 14563: 0.021  | 
+Average recall Male noOfUsers 11007: 0.007  | Average recall Female noOfUsers 3556: 0.009  | Average recall Overall noOfUsers 14563: 0.008  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.988 | Female: 0.990 | Overall: 0.989
+Average explaination serentipety after Male: 0.357 | Female: 0.349 | Overall: 0.355
+Average diversity after Male: 0.156 | Female: 0.154 | Overall: 0.156
+
+
+--- AFTER ETRopt optimization with alpha=0.95---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.096  | Average ndcg Female noOfUsers 3556: 0.091  | Average ndcg Overall noOfUsers 14563: 0.095  | 
+Average hr Male noOfUsers 11007: 0.149  | Average hr Female noOfUsers 3556: 0.139  | Average hr Overall noOfUsers 14563: 0.146  | 
+Average precision Male noOfUsers 11007: 0.020  | Average precision Female noOfUsers 3556: 0.019  | Average precision Overall noOfUsers 14563: 0.020  | 
+Average recall Male noOfUsers 11007: 0.007  | Average recall Female noOfUsers 3556: 0.009  | Average recall Overall noOfUsers 14563: 0.008  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.989 | Female: 0.990 | Overall: 0.989
+Average explaination serentipety after Male: 0.359 | Female: 0.352 | Overall: 0.357
+Average diversity after Male: 0.158 | Female: 0.156 | Overall: 0.158
+
+
+--- AFTER ETRopt optimization with alpha=1.0---
+Recommandation quality:
+Average ndcg Male noOfUsers 11007: 0.071  | Average ndcg Female noOfUsers 3556: 0.066  | Average ndcg Overall noOfUsers 14563: 0.069  | 
+Average hr Male noOfUsers 11007: 0.100  | Average hr Female noOfUsers 3556: 0.092  | Average hr Overall noOfUsers 14563: 0.098  | 
+Average precision Male noOfUsers 11007: 0.012  | Average precision Female noOfUsers 3556: 0.011  | Average precision Overall noOfUsers 14563: 0.012  | 
+Average recall Male noOfUsers 11007: 0.005  | Average recall Female noOfUsers 3556: 0.005  | Average recall Overall noOfUsers 14563: 0.005  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.989 | Female: 0.990 | Overall: 0.990
+Average explaination serentipety after Male: 0.387 | Female: 0.380 | Overall: 0.386
+Average diversity after Male: 0.164 | Female: 0.162 | Overall: 0.163
+
+
