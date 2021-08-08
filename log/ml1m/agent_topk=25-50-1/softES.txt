@@ -1,0 +1,12 @@
+Recommandation quality:
+Average ndcg Male: 0.300  | Average ndcg Female: 0.273  | Average ndcg Overall: 0.292  | 
+Average hr Male: 0.569  | Average hr Female: 0.510  | Average hr Overall: 0.553  | 
+Average precision Male: 0.110  | Average precision Female: 0.087  | Average precision Overall: 0.104  | 
+Average recall Male: 0.051  | Average recall Female: 0.048  | Average recall Overall: 0.050  | 
+
+Explaination Quality:
+Average time relevance after Male: 0.486 | Female: 0.486 | Overall: 0.486
+Average explaination serentipety after Male: 0.443 | Female: 0.434 | Overall: 0.440
+Average diversity after Male: 0.196 | Female: 0.200 | Overall: 0.197
+
+
