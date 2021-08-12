@@ -1,9 +1,9 @@
 # Explanability Quality Aware Over Knowledge Graphs
 This repository contains the source code of the WSDM 2022 paper "Explanability Quality Aware Over Knowledge Graphs", where we proposed three quantitive explanation metrics and proposed a framework for path-based explanable RCMSYS over KG capable of optimizing both explanbility quality and recommandation quality. 
 # Dataset
-The two dataset used have records of sensible attributes of users and they are Movielens 1 milion a well known dataset for movie recommandation and a subset of LAST-FM 1 billion for music recommandation. The correspondet Knowledge Graph completion derive from two important state of art explanable recommender system, Joint-KG \[2\] for ml1m and KGAT [\3\] for Last-FM.
-The datasets are preprocessed with the dataset_mapper.py in order to compute various mappings, clean the data and formatting it for being read from our baseline model.
-You can download the preprocessed dataset directly from there: [preprocessed-datasets]()
+The two dataset used have records of sensible attributes of users and they are Movielens 1 milion a well known dataset for movie recommandation and a subset of LAST-FM 1 billion for music recommandation. The correspondet Knowledge Graph completion derive from two important state of art explanable recommender system, Joint-KG \[2\] for ml1m and KGAT \[3\] for Last-FM.  
+The datasets are preprocessed with the dataset_mapper.py in order to compute various mappings, clean the data and formatting it for being read from our baseline model.  
+You can download the preprocessed dataset directly from there: [preprocessed-datasets](https://we.tl/t-rn1hsDRMN7). The datasets folder must stay in "./\<main-project-folder\>/"  
 If you wish to download the original datasets you can find them there [ML1M](https://grouplens.org/datasets/movielens/) [LAST-FM](http://www.cp.jku.at/datasets/LFM-1b/).
 
 # Requirements
@@ -16,10 +16,10 @@ pip install -r requirements.txt
 # Paths
 In order to apply an optimization or measure a baseline with our proposed metrics you will need to store the paths in csv files with "," as delimiter.  
 
-If you want to reproduce the results you can download the already computed paths from [here]().  
+If you want to reproduce the results you can download the already computed paths from here: [ML1M](https://we.tl/t-tb5qkedqt3) [LAST-FM](https://we.tl/t-ZK3VvwpBCl) paths. The path files must stay in the following location: "\<main-project-dir\>/paths/agent-topk=\<your-agent-topk\>/\<dataset-name\>/"
 If you wish to apply in-train mitigation on the baseline, produce more paths or change the metaparameters you can retrain it and produce the paths, they will be automatically saved using the path_extractor.py file.  
-
-Instead if you wish to use this framework with other path base explanable algorithm make sure to extract the paths and have them on this form:
+You can downloaded the precomputed TransE embeddings, agent-policy and agent cpkt used for the experiments from there: [ML1M](https://we.tl/t-tb5qkedqt3) [LAST-FM](https://we.tl/t-1JNL8VAzEE). This files must stay in the following location: "\<main-project-dir\>/models/PGPR/tmp/\<dataset-name\>"  
+Instead if you wish to use this framework with other path-based explanable algorithm make sure to extract the paths and have them on this form:
 ## Requirements for Alpha Optimization
 In order to performe the reranking you would need a pred_path.csv. Files must follow this format:    
 
@@ -89,3 +89,6 @@ You can define which optimization to use, the alpha value and more using these f
 - --save_overall: If true saves the avgs and distribution also for the overall group
 
 # References
+\[1\] Yikun Xian, Zuohui Fu, S. Muthukrishnan, Gerard de Melo, and Yongfeng Zhang. 2019. Reinforcement knowledge graph reasoning for explainable recommendation. In Proceedings of the 42nd International ACM SIGIR (Paris, France) https://github.com/orcax/PGPR 
+\[2\] Cao, Yixin and Wang, Xiang and He, Xiangnan and Hu, Zikun and Chua Tat-seng. 2019. Unifying Knowledge Graph Learning and Recommendation: Towards a Better Understanding of User Preference https://github.com/TaoMiner/joint-kg-recommender
+\[3\] Xiang Wang, Xiangnan He, Yixin Cao, Meng Liu and Tat-Seng Chua (2019). KGAT: Knowledge Graph Attention Network for Recommendation. In KDD'19, Anchorage, Alaska, USA, August 4-8, 2019.  https://github.com/xiangwang1223/knowledge_graph_attention_network
