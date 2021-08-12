@@ -3,7 +3,7 @@ This repository contains the source code of the WSDM 2022 paper "Explanability Q
 # Dataset
 The two dataset used have records of sensible attributes of users and they are Movielens 1 milion a well known dataset for movie recommandation and a subset of LAST-FM 1 billion for music recommandation. The correspondet Knowledge Graph completion derive from two important state of art explanable recommender system, Joint-KG \[2\] for ml1m and KGAT [\3\] for Last-FM.
 The datasets are preprocessed with the dataset_mapper.py in order to compute various mappings, clean the data and formatting it for being read from our baseline model.
-You can download the preprocessed dataset directly from there: [preprocessed-datasets](preproc)
+You can download the preprocessed dataset directly from there: [preprocessed-datasets](https://we.tl/t-rn1hsDRMN7). The datasets folder must stai in "./<main-project-folder>/"
 If you wish to download the original datasets you can find them there [ML1M](https://grouplens.org/datasets/movielens/) [LAST-FM](http://www.cp.jku.at/datasets/LFM-1b/).
 
 # Requirements
@@ -89,3 +89,6 @@ You can define which optimization to use, the alpha value and more using these f
 - --save_overall: If true saves the avgs and distribution also for the overall group
 
 # References
+\[1\] Yikun Xian, Zuohui Fu, S. Muthukrishnan, Gerard de Melo, and Yongfeng Zhang. 2019. Reinforcement knowledge graph reasoning for explainable recommendation. In Proceedings of the 42nd International ACM SIGIR (Paris, France) https://github.com/orcax/PGPR 
+\[2\] Cao, Yixin and Wang, Xiang and He, Xiangnan and Hu, Zikun and Chua Tat-seng. 2019. Unifying Knowledge Graph Learning and Recommendation: Towards a Better Understanding of User Preference https://github.com/TaoMiner/joint-kg-recommender
+\[3\] Xiang Wang, Xiangnan He, Yixin Cao, Meng Liu and Tat-Seng Chua (2019). KGAT: Knowledge Graph Attention Network for Recommendation. In KDD'19, Anchorage, Alaska, USA, August 4-8, 2019.  https://github.com/xiangwang1223/knowledge_graph_attention_network
