@@ -12,13 +12,13 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, default="lastfm", help='One of {ml1m, lastfm}')
     parser.add_argument('--agent_topk', type=str, default="25-50-1", help='One of {25-50-1, 10-12-1} or more if you compute the predpaths with PGPR')
     parser.add_argument('--opt', type=str, default="ETRopt", help='One of ["softED", "softES", "softETR", "EDopt", "ESopt", "ETRopt", "ED_ES_opt", "ED_ETR_opt", "ES_ETR_opt", "ED_ES_ETR_opt"]')
-    parser.add_argument('--alpha', type=float, default=-1, help="Determine the weigth of the optimized explaination metric/s in reranking, -1 means test all alpha from 0. to 1. at step of 0.05")
-    parser.add_argument('--eval_baseline', type=bool, default=False, help='If True compute rec quality metrics and explaination quality metrics from the extracted paths')
+    parser.add_argument('--alpha', type=float, default=-1, help="Determine the weigth of the optimized explanation metric/s in reranking, -1 means test all alpha from 0. to 1. at step of 0.05")
+    parser.add_argument('--eval_baseline', type=bool, default=True, help='If True compute rec quality metrics and explanation quality metrics from the extracted paths')
     parser.add_argument('--log_enabled', type=bool, default=True, help='If true save log files instead of printing results')
-    parser.add_argument('--save_baseline_rec_quality_avgs', type=bool, default=False, help='If true save a csv with the average baseline values for rec metrics and groups')
-    parser.add_argument('--save_baseline_exp_quality_avgs', type=bool, default=False, help='If true save a csv with the average baseline values for exp metrics and groups')
-    parser.add_argument('--save_baseline_rec_quality_distributions', type=bool, default=False, help='If true save a csv with the distribution of baseline values for the rec metrics and groups')
-    parser.add_argument('--save_baseline_exp_quality_distributions', type=bool, default=False, help='If true save a csv with the distribution of baseline values for the exp metrics and groups')
+    parser.add_argument('--save_baseline_rec_quality_avgs', type=bool, default=True, help='If true save a csv with the average baseline values for rec metrics and groups')
+    parser.add_argument('--save_baseline_exp_quality_avgs', type=bool, default=True, help='If true save a csv with the average baseline values for exp metrics and groups')
+    parser.add_argument('--save_baseline_rec_quality_distributions', type=bool, default=True, help='If true save a csv with the distribution of baseline values for the rec metrics and groups')
+    parser.add_argument('--save_baseline_exp_quality_distributions', type=bool, default=True, help='If true save a csv with the distribution of baseline values for the exp metrics and groups')
     parser.add_argument('--save_after_rec_quality_avgs', type=bool, default=True, help='If true save a csv with the distribution of after-opt values for rec metrics and groups')
     parser.add_argument('--save_after_exp_quality_avgs', type=bool, default=True, help='If true save a csv with the distribution of after-opt values for exp metrics and groups')
     parser.add_argument('--save_after_rec_quality_distributions', type=bool, default=False, help='If true save a csv with the distribution of after-opt values for the rec metrics and groups')
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_overall', type=bool, default=False, help='If true saves the avgs and distribution also for the overall group')
     args = parser.parse_args()
 
-
+    sys.path.append(r'models/PGPR')
 
     #Creation of results folders
     if not os.path.exists("./results"):
@@ -129,17 +129,17 @@ if __name__ == '__main__':
         exp_metrics_before = {}
         distributions_exp_metrics_before = {}
         # Save average of values in topk for each metric
-        tr_before_mitigation = avg_time_relevance(path_data)
-        es_before_mitigation = avg_explaination_serentipety(path_data)
+        tr_before_mitigation = avg_explanation_time_relevance(path_data)
+        es_before_mitigation = avg_explanation_serendipity(path_data)
         ed_before_mitigation = avg_diversity_score(path_data)
 
         exp_metrics_before["ETR"] = tr_before_mitigation.avg_groups_time_relevance
-        exp_metrics_before["ES"] = es_before_mitigation.avg_groups_explaination_serentipety
-        exp_metrics_before["ED"] = ed_before_mitigation.avg_groups_explaination_diversity
+        exp_metrics_before["ES"] = es_before_mitigation.avg_groups_explanation_serendipity
+        exp_metrics_before["ED"] = ed_before_mitigation.avg_groups_explanation_diversity
         # Save distributions of values in topk for each metric
         distributions_exp_metrics_before["ETR"] = tr_before_mitigation.groups_time_relevance_scores
-        distributions_exp_metrics_before["ES"] = es_before_mitigation.groups_explaination_serentipety_scores
-        distributions_exp_metrics_before["ED"] = ed_before_mitigation.groups_explaination_diversity_scores
+        distributions_exp_metrics_before["ES"] = es_before_mitigation.groups_explanation_serendipity_scores
+        distributions_exp_metrics_before["ED"] = ed_before_mitigation.groups_explanation_diversity_scores
         print_expquality_metrics(exp_metrics_before["ETR"],
                                  exp_metrics_before["ES"],
                                  exp_metrics_before["ED"])
@@ -149,22 +149,22 @@ if __name__ == '__main__':
             filename = result_base_path + "baseline_avg.csv"
             avg_metrics_file = open(filename, 'w+')
             writer = csv.writer(avg_metrics_file)
-            header = ["metric", "group", "data", "opt"]
+            header = ["alpha", "metric", "group", "data", "opt"]
             writer.writerow(header)
             # Write on file avg values for rec quality metrics after optimization
-            if args.save_baseline_rec_quality_avgs:
-                for metric_name, group_values in rec_metrics_before.items():
-                    for group_name, value in group_values.items():
-                        if args.save_overall and group_name == "Overall": continue
-                        writer.writerow([metric_name, group_name, np.mean(value), "baseline"])
-            # Write on file avg values for exp quality metrics after optimization
-            if args.save_baseline_exp_quality_avgs:
-                for metric_name, group_values in exp_metrics_before.items():
-                    for group_name, value in group_values.items():
-                        if args.save_overall and group_name == "Overall": continue
-                        writer.writerow([metric_name, group_name, value, "baseline"])
+            for alpha in [0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75,0.80, 0.85, 0.90, 0.95, 1.]:
+                if args.save_baseline_rec_quality_avgs:
+                    for metric_name, group_values in rec_metrics_before.items():
+                        for group_name, value in group_values.items():
+                            if args.save_overall and group_name == "Overall": continue
+                            writer.writerow([alpha, metric_name, group_name, np.mean(value), "baseline"])
+                # Write on file avg values for exp quality metrics after optimization
+                if args.save_baseline_exp_quality_avgs:
+                    for metric_name, group_values in exp_metrics_before.items():
+                        for group_name, value in group_values.items():
+                            if args.save_overall and group_name == "Overall": continue
+                            writer.writerow([alpha, metric_name, group_name, value, "baseline"])
             avg_metrics_file.close()
-
         # Initialize file to save .csv with avg values of topk recommandation quality metrics
         if args.save_baseline_rec_quality_distributions or args.save_baseline_exp_quality_distributions:
             filename = result_base_path + "baseline_distribution.csv"
@@ -187,6 +187,7 @@ if __name__ == '__main__':
                         for value in values:
                             writer_distribution.writerow([metric_name, group_name, value, "baseline"])
 
+        exit()
 
     #Optimization
     chosen_optimization = args.opt
@@ -214,8 +215,8 @@ if __name__ == '__main__':
                 log_file = open(log_path, "w+")
                 sys.stdout = log_file
 
-            time_relevance_after = avg_time_relevance(path_data)
-            explanation_serendipity_after = avg_explaination_serentipety(path_data)
+            time_relevance_after = avg_explanation_time_relevance(path_data)
+            explanation_serendipity_after = avg_explanation_serendipity(path_data)
             explanation_diversity_after = avg_diversity_score(path_data)
             rec_metrics_after = measure_rec_quality(path_data)
             print_rec_metrics(rec_metrics_after)
@@ -225,13 +226,13 @@ if __name__ == '__main__':
 
             # Save average of values in topk for each metric
             avg_exp_metrics_after["ETR"] = time_relevance_after.avg_groups_time_relevance
-            avg_exp_metrics_after["ES"] = explanation_serendipity_after.avg_groups_explaination_serentipety
-            avg_exp_metrics_after["ED"] = explanation_diversity_after.avg_groups_explaination_diversity
+            avg_exp_metrics_after["ES"] = explanation_serendipity_after.avg_groups_explanation_serendipity
+            avg_exp_metrics_after["ED"] = explanation_diversity_after.avg_groups_explanation_diversity
 
             # Save distributions of values in topk for each metric
             distributions_exp_metrics_after["ETR"] = time_relevance_after.groups_time_relevance_scores
-            distributions_exp_metrics_after["ES"] = explanation_serendipity_after.groups_explaination_serentipety_scores
-            distributions_exp_metrics_after["ED"] = explanation_diversity_after.groups_explaination_diversity_scores
+            distributions_exp_metrics_after["ES"] = explanation_serendipity_after.groups_explanation_serendipity_scores
+            distributions_exp_metrics_after["ED"] = explanation_diversity_after.groups_explanation_diversity_scores
             print_expquality_metrics(avg_exp_metrics_after["ETR"],
                                      avg_exp_metrics_after["ES"],
                                      avg_exp_metrics_after["ED"])
@@ -322,19 +323,19 @@ if __name__ == '__main__':
                 distributions_exp_metrics_after = {}
 
                 #Save average of values in topk for each metric
-                tr_after_mitigation = avg_time_relevance(path_data)
-                es_after_mitigation = avg_explaination_serentipety(path_data)
+                tr_after_mitigation = avg_explanation_time_relevance(path_data)
+                es_after_mitigation = avg_explanation_serendipity(path_data)
                 ed_after_mitigation = avg_diversity_score(path_data)
 
                 # Save average of values in topk for each metric
                 exp_metrics_after["ETR"] = tr_after_mitigation.avg_groups_time_relevance
-                exp_metrics_after["ES"] = es_after_mitigation.avg_groups_explaination_serentipety
-                exp_metrics_after["ED"] = ed_after_mitigation.avg_groups_explaination_diversity
+                exp_metrics_after["ES"] = es_after_mitigation.avg_groups_explanation_serendipity
+                exp_metrics_after["ED"] = ed_after_mitigation.avg_groups_explanation_diversity
 
                 #Save distributions of values in topk for each metric
                 distributions_exp_metrics_after["ETR"] = tr_after_mitigation.groups_time_relevance_scores
-                distributions_exp_metrics_after["ES"] = es_after_mitigation.groups_explaination_serentipety_scores
-                distributions_exp_metrics_after["ED"] = ed_after_mitigation.groups_explaination_diversity_scores
+                distributions_exp_metrics_after["ES"] = es_after_mitigation.groups_explanation_serendipity_scores
+                distributions_exp_metrics_after["ED"] = ed_after_mitigation.groups_explanation_diversity_scores
                 print_expquality_metrics(exp_metrics_after["ETR"],
                                          exp_metrics_after["ES"],
                                          exp_metrics_after["ED"])

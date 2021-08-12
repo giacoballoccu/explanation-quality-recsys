@@ -17,7 +17,7 @@ class PathDataLoader(object):
             self.load_uid_pid_path()
         else:
             self.uid_topk = {}
-            self.uid_pid_explaination = {}
+            self.uid_pid_explanation = {}
         self.load_pred_paths()
         self.uid_pid_timestamp, self.uid_timestamp = get_interaction2timestamp(self.dataset_name)
 
@@ -41,8 +41,8 @@ class PathDataLoader(object):
 
     # Returns a dict of dict where every uid pid represent the list of paths starting from a user ending in a given product
     def load_uid_pid_path(self):
-        self.uid_pid_explaination = {}
-        uid_pid_path_topk_file = open("paths/" + self.dataset_name + "/agent_topk=" + self.agent_topk + "/uid_pid_explaination.csv")
+        self.uid_pid_explanation = {}
+        uid_pid_path_topk_file = open("paths/" + self.dataset_name + "/agent_topk=" + self.agent_topk + "/uid_pid_explanation.csv")
         reader = csv.reader(uid_pid_path_topk_file, delimiter=",")
         next(reader, None)
         for row in reader:
@@ -50,14 +50,14 @@ class PathDataLoader(object):
             pid = int(row[1])
             normalized_path = normalize_path(row[2])
 
-            if uid not in self.uid_pid_explaination:
-                self.uid_pid_explaination[uid] = {}
-            if pid not in self.uid_pid_explaination[uid]:
-                self.uid_pid_explaination[uid][pid] = []
+            if uid not in self.uid_pid_explanation:
+                self.uid_pid_explanation[uid] = {}
+            if pid not in self.uid_pid_explanation[uid]:
+                self.uid_pid_explanation[uid][pid] = []
 
-            self.uid_pid_explaination[uid][pid] = normalized_path
+            self.uid_pid_explanation[uid][pid] = normalized_path
         uid_pid_path_topk_file.close()
-        return self.uid_pid_explaination
+        return self.uid_pid_explanation
 
     # Returns a dict where every
     def load_pred_paths(self):

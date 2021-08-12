@@ -7,7 +7,7 @@ import pickle
 from easydict import EasyDict as edict
 import random
 import collections
-from utils import get_movie_relationships, DATASET_DIR, get_review_uid_kg_uid_mapping, get_product_id_kgid_mapping, get_song_relationships
+from models.PGPR.utils import get_movie_relationships, DATASET_DIR, get_review_uid_kg_uid_mapping, get_product_id_kgid_mapping, get_song_relationships
 
 
 class AmazonDataset(object):

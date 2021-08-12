@@ -3,6 +3,9 @@ from __future__ import absolute_import, division, print_function
 import os
 import argparse
 from math import log
+
+import torch as torch
+from easydict import EasyDict as edict
 from tqdm import tqdm
 from functools import reduce
 from kg_env import BatchKGEnvironment
@@ -12,32 +15,7 @@ from utils import *
 from extract_predicted_paths import *
 import pandas as pd
 
-#from utils import get_interaction2timestamp, get_user2gender
-
-def get_user2gender(dataset_name):
-    file = open(DATASET_DIR[dataset_name] + "/mappings/uid2gender.txt", 'r')
-    csv_reader = csv.reader(file, delimiter='\n')
-    uid_gender = {}
-    gender2name = {-1: "All", 0: "Male", 1: "Female"}
-    _, uid_mapping = get_uidreview2uidkg(dataset_name)
-    for row in csv_reader:
-        row = row[0].strip().split('\t')
-        if dataset_name == "ml1m":
-            uid_gender[uid_mapping[int(row[0])]] = 0 if row[1] == 'M' else 1
-        else:
-            uid_gender[uid_mapping[int(row[0])]] = 0 if row[1] == 'm' else 1
-    return uid_gender, gender2name
-
-def get_uidreview2uidkg(dataset_name):
-    file = open(DATASET_DIR[dataset_name] + "/mappings/review_uid_kg_uid_mapping.txt", 'r')
-    csv_reader = csv.reader(file, delimiter='\t')
-    review_uid2kg_uid = {}
-    uid_kg2uid_review = {}
-    next(csv_reader, None)
-    for row in csv_reader:
-        review_uid2kg_uid[int(row[1])] = int(row[0])
-        uid_kg2uid_review[int(row[0])] = int(row[1])
-    return review_uid2kg_uid, uid_kg2uid_review
+from myutils import get_uidreview2uidkg, get_user2gender,get_user2age, get_user2occupation
 
 def evaluate(dataset_name, topk_matches, test_user_products):
     """Compute metrics for predicted recommendations.
@@ -56,10 +34,30 @@ def evaluate(dataset_name, topk_matches, test_user_products):
         print("Not existing attribute selected attribute")
         return
     # Compute metrics
-    precisions, recalls, ndcgs, hits = [], [], [], []
-    ndcgs = {-1: []}
-    ndcgs_bounded = {-1: []}
-    hits = {-1: []}
+    metrics = edict(
+        ndcg=edict(
+            Male=[],
+            Female=[],
+            Overall=[]
+        ),
+        hr=edict(
+            Male=[],
+            Female=[],
+            Overall=[]
+        ),
+        precision=edict(
+            Male=[],
+            Female=[],
+            Overall=[]
+        ),
+        recall=edict(
+            Male=[],
+            Female=[],
+            Overall=[]
+        ),
+
+    )
+    uid2gender, gender2name = get_user2gender()
     test_user_idxs = list(test_user_products.keys())
     for uid in test_user_idxs:
         if uid not in topk_matches or len(topk_matches[uid]) < 10:
@@ -69,68 +67,46 @@ def evaluate(dataset_name, topk_matches, test_user_products):
         if len(pred_list) == 0:
             continue
 
-        dcg = 0.0
+        k = 0
         hit_num = 0.0
-        attribute_val = user2attribute[uid]
-
         hit_list = []
-
-        for i in range(len(pred_list)):  # binary relevance
-            if pred_list[i] in rel_set:
-                dcg += 1. / (log(i + 2) / log(2))
+        for pid in pred_list:
+            k += 1
+            if pid in rel_set:
                 hit_num += 1
                 hit_list.append(1)
             else:
                 hit_list.append(0)
-        # idcg
-        idcg = 0.0
-        for i in range(min(len(rel_set), len(pred_list))):
-            idcg += 1. / (log(i + 2) / log(2))
 
-        ndcg = dcg / idcg
+        ndcg = ndcg_at_k(hit_list, k)
         recall = hit_num / len(rel_set)
         precision = hit_num / len(pred_list)
         hit = 1.0 if hit_num > 0.0 else 0.0
 
-        if attribute_val not in ndcgs:
-            ndcgs[attribute_val] = []
-            hits[attribute_val] = []
-            ndcgs_bounded[attribute_val] = []
+        # Based on attribute
+        attribute_val = uid2gender[uid]
+        gender = gender2name[attribute_val]
+        all = "Overall"
 
-        ndcgs[attribute_val].append(ndcg)
-        recalls.append(recall)
-        precisions.append(precision)
-        hits[attribute_val].append(hit)
-        ndcgs[-1].append(ndcg)  # general
-        hits[-1].append(hit)  # general
+        # According to gender
+        metrics.ndcg[gender].append(ndcg)
+        metrics.recall[gender].append(recall)
+        metrics.precision[gender].append(precision)
+        metrics.hr[gender].append(hit)
 
-        k = len(hit_list)
-        ndcg2 = 0.0
-        if hit_num > 0:
-            ndcg2 = ndcg_at_k(hit_list, k)
-            ndcgs_bounded[attribute_val].append(ndcg2)
-            ndcgs_bounded[-1].append(ndcg2)
+        # General
+        metrics.ndcg[all].append(ndcg)
+        metrics.hr[all].append(hit)
+        metrics.recall[all].append(recall)
+        metrics.precision[all].append(precision)
 
-    for group_id, ndcg_vals in ndcgs.items():
-        avg_ndcg_group = np.mean(ndcg_vals) * 100
-        n_users = len(ndcg_vals)
-        print("{} group  {}, noOfUser={}, PGPR NDCG={:.4f}".format(attribute_name, attribute2name[group_id], n_users,
-                                                                   avg_ndcg_group))
-
-    print("\n")
-
-    for group_id, bounded_ndcg_vals in ndcgs_bounded.items():
-        avg_ndcg_group = np.mean(bounded_ndcg_vals)
-        n_users = len(bounded_ndcg_vals)
-        print("{} group {}, noOfUser={}, BOUNDED NDCG={:.4f}".format(attribute_name, attribute2name[group_id], n_users,
-                                                                     avg_ndcg_group))
-    print("\n")
-
-    for group_id, hit_vals in hits.items():
-        avg_hit_group = np.mean(hit_vals)
-        n_users = len(hit_vals)
-        print("{} group {}, noOfUser={}, Average HR in topk={:.4f}".format(attribute_name, attribute2name[group_id],
-                                                                           n_users, avg_hit_group))
+    for metric, groups_values in metrics.items():
+        for group_id, values in groups_values.items():
+            avg_metric_value = np.mean(values)
+            n_users = len(values)
+            print("{} group  {}, noOfUser={}, PGPR {}={:.4f}".format(attribute_name, attribute2name[group_id], n_users, metric,
+                                                                       avg_metric_value))
+            print("\n")
 
 
 def dcg_at_k(r, k, method=1):

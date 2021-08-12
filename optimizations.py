@@ -1,11 +1,11 @@
 from myutils import get_rec_pid, get_path_type, PATH_TYPES
 from metrics import *
 
-def sort_by_etr(path_full):
-    return explantion_time_relevance_single(path_full[2])
+def sort_by_ETR(path_full):
+    return explanation_time_relevance_single(path_full[2])
 
-def sort_by_es(path_full):
-    return explaination_serentipety_single(path_full[2])
+def sort_by_ES(path_full):
+    return explanation_serendipity_single(path_full[2])
 
 # Soft optimization ETR, for every user topk predicted by the baseline,
 # get the predicted paths for every item and change the explanation according to ETR motivations
@@ -15,7 +15,7 @@ def soft_optimization_ETR(path_data):
 
         #Retrive topk explainations without changin the selected pids
         for pid in topk:
-            pred_paths[uid][pid].sort(key=lambda x: explantion_time_relevance_single(path_data, x[-1]), reverse=True)
+            pred_paths[uid][pid].sort(key=lambda x: explanation_time_relevance_single(path_data, x[-1]), reverse=True)
             path_data.uid_pid_explaination[uid][pid] = pred_paths[uid][pid][0][-1]
 
 # Soft optimization ETR, for every user topk predicted by the baseline,
@@ -27,7 +27,7 @@ def soft_optimization_ES(path_data):
 
         #Retrive topk explainations without changin the selected pids
         for pid in topk:
-            pred_path[uid][pid].sort(key=lambda x: explaination_serentipety_single(path_data, x[-1]), reverse=True)
+            pred_path[uid][pid].sort(key=lambda x: explanation_serendipity_single(path_data, x[-1]), reverse=True)
             path_data.uid_pid_explaination[uid][pid] = pred_path[uid][pid][0][-1]
 
 
@@ -86,7 +86,7 @@ def optimize_ETR(path_data, alpha):
         for pid, path_list in pid_list.items():
             candidates.extend(path_list)
 
-        candidates.sort(key=lambda candidate: (candidate[0] * (1-alpha)) + (explantion_time_relevance_single(path_data, candidate[-1]) * alpha), reverse=True)
+        candidates.sort(key=lambda candidate: (candidate[0] * (1-alpha)) + (explanation_time_relevance_single(path_data, candidate[-1]) * alpha), reverse=True)
 
         #Pick the best items
         for candidate in candidates:
@@ -118,7 +118,7 @@ def optimize_ES(path_data, alpha):
             path_list.sort(key=lambda x: x[1], reverse=True)
             candidates.extend(path_list)
 
-        candidates.sort(key=lambda x: (x[0] * (1-alpha)) + (explaination_serentipety_single(path_data, x[-1]) * alpha), reverse=True)
+        candidates.sort(key=lambda x: (x[0] * (1-alpha)) + (explanation_serendipity_single(path_data, x[-1]) * alpha), reverse=True)
 
         #Pick the best items
         for candidate in candidates:
@@ -221,7 +221,7 @@ def optimize_ETR_ES(path_data, alpha):
         for candidate in candidates:
             candidate[0] = (candidate[0] - min_score) / (max_score - min_score)
 
-        candidates.sort(key=lambda x: (x[0] * (1-alpha)) + ((explantion_time_relevance_single(path_data, x[-1]) + explaination_serentipety_single(path_data, x[-1])) * alpha),
+        candidates.sort(key=lambda x: (x[0] * (1-alpha)) + ((explanation_time_relevance_single(path_data, x[-1]) + explanation_serendipity_single(path_data, x[-1])) * alpha),
                         reverse=True)
 
         # Pick the best items
@@ -262,7 +262,7 @@ def optimize_ED_ETR(path_data, alpha):
 
         # Sort every path type bin by a mixed score based on explaination time relevance and item relevance
         for bin_type, path_list in bins.items():
-            path_list.sort(key=lambda x: (x[0] * (1-alpha)) + (explantion_time_relevance_single(path_data, x[-1]) * alpha),
+            path_list.sort(key=lambda x: (x[0] * (1-alpha)) + (explanation_time_relevance_single(path_data, x[-1]) * alpha),
                            reverse=True)
 
         ptype_seen = set()
@@ -323,7 +323,7 @@ def optimize_ED_ES(path_data, alpha):
 
         # Sort every path type bin by a mixed score based on explaination time relevance and item relevance
         for bin_type, path_list in bins.items():
-            path_list.sort(key=lambda x: (x[0] * (1-alpha)) + (explaination_serentipety_single(path_data, x[-1])*alpha),
+            path_list.sort(key=lambda x: (x[0] * (1-alpha)) + (explanation_serendipity_single(path_data, x[-1]) * alpha),
                            reverse=True)
 
         ptype_seen = set()
@@ -386,7 +386,7 @@ def optimize_ED_ES_ETR(path_data, alpha):
         # Sort every path type bin by a mixed score based on explaination time relevance and item relevance
         for bin_type, path_list in bins.items():
             path_list.sort(
-                key=lambda x: (x[0] * (1 - alpha)) + ((explantion_time_relevance_single(path_data, x[-1]) + explaination_serentipety_single(path_data, x[-1])) * alpha),
+                key=lambda x: (x[0] * (1 - alpha)) + ((explanation_time_relevance_single(path_data, x[-1]) + explanation_serendipity_single(path_data, x[-1])) * alpha),
                 reverse=True)
 
         ptype_seen = set()

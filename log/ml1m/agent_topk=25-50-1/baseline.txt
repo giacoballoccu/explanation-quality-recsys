@@ -1,14 +1,13 @@
 --- Baseline---
 Recommandation quality:
-Average ndcg Male: 0.300  | Average ndcg Female: 0.273  | Average ndcg Overall: 0.292  | 
-Average hr Male: 0.569  | Average hr Female: 0.510  | Average hr Overall: 0.553  | 
-Average precision Male: 0.110  | Average precision Female: 0.087  | Average precision Overall: 0.104  | 
-Average recall Male: 0.051  | Average recall Female: 0.048  | Average recall Overall: 0.050  | 
+Average ndcg Male noOfUsers 4331: 0.300  | Average ndcg Female noOfUsers 1709: 0.273  | Average ndcg Overall noOfUsers 6040: 0.292  | 
+Average hr Male noOfUsers 4331: 0.569  | Average hr Female noOfUsers 1709: 0.510  | Average hr Overall noOfUsers 6040: 0.553  | 
+Average precision Male noOfUsers 4331: 0.110  | Average precision Female noOfUsers 1709: 0.087  | Average precision Overall noOfUsers 6040: 0.104  | 
+Average recall Male noOfUsers 4331: 0.051  | Average recall Female noOfUsers 1709: 0.048  | Average recall Overall noOfUsers 6040: 0.050  | 
 
-Explaination Quality:
+Explanation Quality:
 Average time relevance after Male: 0.465 | Female: 0.461 | Overall: 0.464
-Average explaination serentipety after Male: 0.276 | Female: 0.269 | Overall: 0.274
+Average explanation serendipity after Male: 0.276 | Female: 0.269 | Overall: 0.274
 Average diversity after Male: 0.190 | Female: 0.192 | Overall: 0.191
 
 
-Performing Soft-Optimization...

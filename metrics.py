@@ -103,7 +103,7 @@ def print_rec_metrics(metrics):
         print()
 
 """
-Explaination metrics
+Explanation metrics
 """
 def topk_diversity_score(path_data):
     diversity_scores = {}
@@ -111,10 +111,10 @@ def topk_diversity_score(path_data):
         if uid not in path_data.test_labels: continue
         unique_path_types = set()
         for pid in topk:
-            if pid not in path_data.uid_pid_explaination[uid]:
+            if pid not in path_data.uid_pid_explanation[uid]:
                 #print("strano 3")
                 continue
-            current_path = path_data.uid_pid_explaination[uid][pid]
+            current_path = path_data.uid_pid_explanation[uid][pid]
             path_type = get_path_type(current_path)
             unique_path_types.add(path_type)
         diversity_score = len(unique_path_types) / TOTAL_PATH_TYPES[path_data.dataset_name]
@@ -132,31 +132,31 @@ def avg_diversity_score(path_data, attribute_name="Gender"):
     else:
         print("The attribute selected doesn't exist.")
         return
-    avg_groups_explaination_diversity = {}
-    groups_explaination_diversity_scores = {"Overall": []}
+    avg_groups_explanation_diversity = {}
+    groups_explanation_diversity_scores = {"Overall": []}
 
     for _, attribute_label in attribute2name.items():
-        groups_explaination_diversity_scores[attribute_label] = []
+        groups_explanation_diversity_scores[attribute_label] = []
 
     for uid, diversity_score in uid_diversity_scores.items():
         attr_value = user2attribute[uid]
         attr_name = attribute2name[attr_value]
-        groups_explaination_diversity_scores[attr_name].append(diversity_score)
-        groups_explaination_diversity_scores["Overall"].append(diversity_score)
+        groups_explanation_diversity_scores[attr_name].append(diversity_score)
+        groups_explanation_diversity_scores["Overall"].append(diversity_score)
 
-    for attribute_label, group_explaination_diversity_scores in groups_explaination_diversity_scores.items():
-        avg_groups_explaination_diversity[attribute_label] = np.array(group_explaination_diversity_scores).mean()
+    for attribute_label, group_explanation_diversity_scores in groups_explanation_diversity_scores.items():
+        avg_groups_explanation_diversity[attribute_label] = np.array(group_explanation_diversity_scores).mean()
 
-    avg_groups_explaination_diversity["Overall"] = np.array(groups_explaination_diversity_scores["Overall"]).mean()
+    avg_groups_explanation_diversity["Overall"] = np.array(groups_explanation_diversity_scores["Overall"]).mean()
 
     diversity_results = edict(
-        avg_groups_explaination_diversity=avg_groups_explaination_diversity,
-        groups_explaination_diversity_scores=groups_explaination_diversity_scores
+        avg_groups_explanation_diversity=avg_groups_explanation_diversity,
+        groups_explanation_diversity_scores=groups_explanation_diversity_scores
     )
     return diversity_results
 
 #Extract the value of ETR for the given user item path from the ETR_matrix
-def explantion_time_relevance_single(path_data, path):
+def explanation_time_relevance_single(path_data, path):
     uid = int(path[0][-1])
     path_data.uid_timestamp[uid].sort()
 
@@ -171,7 +171,7 @@ def explantion_time_relevance_single(path_data, path):
 
 
 # Returns a dict where to every uid is associated a value of time_relevance calculated based on his topk
-def topk_time_relevance(path_data):
+def topk_explanation_time_relevance(path_data):
     time_relevance_topk = {}
 
     # Precompute user timestamps weigths
@@ -186,10 +186,10 @@ def topk_time_relevance(path_data):
             continue
         for pid in path_data.uid_topk[uid]:
             count_pid += 1
-            if pid not in path_data.uid_pid_explaination[uid]:
+            if pid not in path_data.uid_pid_explanation[uid]:
                 count += 1
                 continue
-            predicted_path = path_data.uid_pid_explaination[uid][pid]
+            predicted_path = path_data.uid_pid_explanation[uid][pid]
             interaction = int(get_interaction_id(predicted_path))
             if interaction not in path_data.uid_pid_timestamp[uid]: continue
             interaction_timestamp = path_data.uid_pid_timestamp[uid][interaction]
@@ -202,8 +202,8 @@ def topk_time_relevance(path_data):
 
 
 # Returns an avg value for the time_relevance of a given group
-def avg_time_relevance(path_data, attribute_name="Gender"):
-    topk_time_relevance_scores = topk_time_relevance(path_data)
+def avg_explanation_time_relevance(path_data, attribute_name="Gender"):
+    topk_time_relevance_scores = topk_explanation_time_relevance(path_data)
     if attribute_name == "Gender":
         user2attribute, attribute2name = get_user2gender(path_data.dataset_name)
     elif attribute_name == "Age":
@@ -240,38 +240,38 @@ def avg_time_relevance(path_data, attribute_name="Gender"):
 
     return time_relevance
 
-
-def explaination_serentipety_single(path_data, path):
+#Extract the value of ES for the given user item path from the ES_matrix
+def explanation_serendipity_single(path_data, path):
     related_entity_type, related_entity_id = get_related_entity(path)
-    explaination_serentipety = path_data.ES_matrix[related_entity_type][related_entity_id]
-    return explaination_serentipety
+    explanation_serendipity = path_data.ES_matrix[related_entity_type][related_entity_id]
+    return explanation_serendipity
 
 
-def topks_explaination_serentipety(path_data):
-    explaination_serentipety_topk = {}
+def topks_explanation_serendipity(path_data):
+    explanation_serendipity_topk = {}
 
     # Precompute entity distribution
-    exp_serentipety_matrix = path_data.ES_matrix
+    exp_serendipity_matrix = path_data.ES_matrix
 
-    #Measure explaination serentipety for topk
+    #Measure explanation serendipity for topk
     for uid in path_data.test_labels:
-        explaination_serentipety_single_topk = []
+        explanation_serendipity_single_topk = []
         if uid not in path_data.uid_topk: continue
         for pid in path_data.uid_topk[uid]:
-            if pid not in path_data.uid_pid_explaination[uid]:
+            if pid not in path_data.uid_pid_explanation[uid]:
                 #print("strano 2")
                 continue
-            path = path_data.uid_pid_explaination[uid][pid]
+            path = path_data.uid_pid_explanation[uid][pid]
             related_entity_type, related_entity_id = get_related_entity(path)
-            explaination_serentipety = exp_serentipety_matrix[related_entity_type][related_entity_id]
-            explaination_serentipety_single_topk.append(explaination_serentipety)
-        if len(explaination_serentipety_single_topk) == 0: continue
-        explaination_serentipety_topk[uid] = np.array(explaination_serentipety_single_topk).mean()
-    return explaination_serentipety_topk
+            explanation_serendipity = exp_serendipity_matrix[related_entity_type][related_entity_id]
+            explanation_serendipity_single_topk.append(explanation_serendipity)
+        if len(explanation_serendipity_single_topk) == 0: continue
+        explanation_serendipity_topk[uid] = np.array(explanation_serendipity_single_topk).mean()
+    return explanation_serendipity_topk
 
 
-def avg_explaination_serentipety(path_data, attribute_name="Gender"):
-    topks_explaination_serentipety_scores = topks_explaination_serentipety(path_data)
+def avg_explanation_serendipity(path_data, attribute_name="Gender"):
+    topks_explanation_serendipity_scores = topks_explanation_serendipity(path_data)
     if attribute_name == "Gender":
         user2attribute, attribute2name = get_user2gender(path_data.dataset_name)
     elif attribute_name == "Age":
@@ -283,44 +283,44 @@ def avg_explaination_serentipety(path_data, attribute_name="Gender"):
     else:
         print("The attribute selected doesn't exist.")
         return
-    avg_groups_explaination_serentipety = {}
-    groups_explaination_serentipety_scores = {"Overall": []}
+    avg_groups_explanation_serendipity = {}
+    groups_explanation_serendipity_scores = {"Overall": []}
 
     for _, attribute_label in attribute2name.items():
-        groups_explaination_serentipety_scores[attribute_label] = []
+        groups_explanation_serendipity_scores[attribute_label] = []
 
-    for uid, explaination_serentipety in topks_explaination_serentipety_scores.items():
+    for uid, explanation_serendipity in topks_explanation_serendipity_scores.items():
         attr_value = user2attribute[uid]
         attr_name = attribute2name[attr_value]
-        groups_explaination_serentipety_scores[attr_name].append(explaination_serentipety)
-        groups_explaination_serentipety_scores["Overall"].append(explaination_serentipety)
+        groups_explanation_serendipity_scores[attr_name].append(explanation_serendipity)
+        groups_explanation_serendipity_scores["Overall"].append(explanation_serendipity)
 
-    for attribute_label, group_explaination_serentipety_scores in groups_explaination_serentipety_scores.items():
-        avg_groups_explaination_serentipety[attribute_label] = np.array(
-            group_explaination_serentipety_scores).mean()
+    for attribute_label, group_explanation_serendipity_scores in groups_explanation_serendipity_scores.items():
+        avg_groups_explanation_serendipity[attribute_label] = np.array(
+            group_explanation_serendipity_scores).mean()
 
-    avg_groups_explaination_serentipety["Overall"] = np.array(groups_explaination_serentipety_scores["Overall"]).mean()
-    serentipety_results = edict(
-        avg_groups_explaination_serentipety=avg_groups_explaination_serentipety,
-        groups_explaination_serentipety_scores=groups_explaination_serentipety_scores,
+    avg_groups_explanation_serendipity["Overall"] = np.array(groups_explanation_serendipity_scores["Overall"]).mean()
+    serendipity_results = edict(
+        avg_groups_explanation_serendipity=avg_groups_explanation_serendipity,
+        groups_explanation_serendipity_scores=groups_explanation_serendipity_scores,
     )
-    return serentipety_results
+    return serendipity_results
 
-def print_expquality_metrics(avg_groups_time_relevance, avg_groups_explaination_serentipety, avg_groups_explaination_diversity):
-    print("\nExplaination Quality:")
+def print_expquality_metrics(avg_groups_time_relevance, avg_groups_explanation_serendipity, avg_groups_explanation_diversity):
+    print("\nExplanation Quality:")
     print("Average time relevance after Male: {:.3f} | Female: {:.3f} | Overall: {:.3f}".format(
         avg_groups_time_relevance["Male"],
         avg_groups_time_relevance["Female"],
         avg_groups_time_relevance["Overall"],
     ))
-    print("Average explaination serentipety after Male: {:.3f} | Female: {:.3f} | Overall: {:.3f}".format(
-        avg_groups_explaination_serentipety["Male"],
-        avg_groups_explaination_serentipety["Female"],
-        avg_groups_explaination_serentipety["Overall"],
+    print("Average explanation serendipity after Male: {:.3f} | Female: {:.3f} | Overall: {:.3f}".format(
+        avg_groups_explanation_serendipity["Male"],
+        avg_groups_explanation_serendipity["Female"],
+        avg_groups_explanation_serendipity["Overall"],
     ))
     print("Average diversity after Male: {:.3f} | Female: {:.3f} | Overall: {:.3f}".format(
-        avg_groups_explaination_diversity["Male"],
-        avg_groups_explaination_diversity["Female"],
-        avg_groups_explaination_diversity["Overall"],
+        avg_groups_explanation_diversity["Male"],
+        avg_groups_explanation_diversity["Female"],
+        avg_groups_explanation_diversity["Overall"],
     ))
     print("\n")

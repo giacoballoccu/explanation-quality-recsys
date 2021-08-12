@@ -13,10 +13,9 @@ import random
 from datetime import datetime
 import matplotlib.pyplot as plt
 import torch
-from utils import *
 from easydict import EasyDict as edict
-from utils import *
-from data_utils import AmazonDataset
+from models.PGPR.utils import *
+from models.PGPR.data_utils import AmazonDataset
 
 
 class KnowledgeGraph(object):
