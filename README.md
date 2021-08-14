@@ -1,5 +1,5 @@
-# Explanability Quality Aware Over Knowledge Graphs
-This repository contains the source code of the paper "Explanability Quality Aware Over Knowledge Graphs", where we proposed three quantitive explanation metrics and proposed a framework for path-based explanable RCMSYS over KG capable of optimizing both explanbility quality and recommandation quality. 
+# Incorporating Quality of Explanations in Recommender Systems with Knowledge Graphs
+This repository contains the source code of the paper "Incorporating Quality of Explanations in Recommender Systems with Knowledge Graphs", where we proposed three quantitive explanation metrics and proposed a framework for path-based explanable RCMSYS over KG capable of optimizing both explanbility quality and recommandation quality. 
 # Dataset
 The two dataset used have records of sensible attributes of users and they are **Movielens 1million (ML1M)** a well known dataset for movie recommandation and a subset of **LAST-FM 1billion (LAST-FM)** for music recommandation.  
 The correspondet Knowledge Graph completion derive from two important state of art explanable recommender system, **Joint-KG \[2\]** for ml1m and **KGAT \[3\]** for Last-FM.  
