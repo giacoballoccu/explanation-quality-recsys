@@ -4,7 +4,7 @@ This repository contains the source code of the paper "Incorporating Quality of 
 The two dataset used have records of sensible attributes of users and they are **Movielens 1million (ML1M)** a well known dataset for movie recommandation and a subset of **LAST-FM 1billion (LAST-FM)** for music recommandation.  
 The correspondet Knowledge Graph completion derive from two important state of art explanable recommender system, **Joint-KG \[2\]** for ml1m and **KGAT \[3\]** for Last-FM.  
 The datasets are preprocessed with the dataset_mapper.py in order to compute various mappings, clean the data and formatting it for being read from our baseline model.  
-You can download the preprocessed dataset directly from there: [preprocessed-datasets](https://we.tl/t-rn1hsDRMN7). The datasets folder must stay in "./\<main-project-folder\>/"  
+You can download the preprocessed dataset directly from there: [preprocessed-datasets](https://drive.google.com/file/d/1IjUi9aURBh7-2hOOz4S0h7WmgYlzZ-Kk/view?usp=sharing). The datasets folder must stay in "./\<main-project-folder\>/"  
 If you wish to download the original datasets you can find them there [ML1M](https://grouplens.org/datasets/movielens/) [LAST-FM](http://www.cp.jku.at/datasets/LFM-1b/).
 
 # Requirements
@@ -17,9 +17,9 @@ pip install -r requirements.txt
 # Paths
 In order to apply an optimization or measure a baseline with our proposed metrics you will need to store the paths in csv files with "," as delimiter.  
 
-If you want to reproduce the results you can download the already computed paths from here: [ML1M](https://we.tl/t-tb5qkedqt3) [LAST-FM](https://we.tl/t-ZK3VvwpBCl) paths. The path files must stay in the following location: "\<main-project-dir\>/paths/agent-topk=\<your-agent-topk\>/\<dataset-name\>/"
+If you want to reproduce the results you can download the already computed paths from here: [ML1M](https://drive.google.com/file/d/14vP6yrZA7GoCh4SqG0jw_SH-FtO6UGOW/view?usp=sharing) [LAST-FM](https://drive.google.com/file/d/1_UsgRd_KLY3UajraExOequ9cLOaJsxI5/view?usp=sharing) paths. The path files must stay in the following location: "\<main-project-dir\>/paths/agent-topk=\<your-agent-topk\>/\<dataset-name\>/"
 If you wish to apply in-train mitigation on the baseline, produce more paths or change the metaparameters you can retrain it and produce the paths, they will be automatically saved using the path_extractor.py file.  
-You can downloaded the precomputed TransE embeddings, agent-policy and agent cpkt used for the experiments from there: [ML1M](https://we.tl/t-tb5qkedqt3) [LAST-FM](https://we.tl/t-1JNL8VAzEE). This files must stay in the following location: "\<main-project-dir\>/models/PGPR/tmp/\<dataset-name\>"  
+You can downloaded the precomputed TransE embeddings, agent-policy and agent cpkt used for the experiments from there: [ML1M](https://drive.google.com/file/d/14vP6yrZA7GoCh4SqG0jw_SH-FtO6UGOW/view?usp=sharing) [LAST-FM](https://drive.google.com/file/d/1vdicX53qz10RhBDWPqWDVfHbtgkqmHQ7/view?usp=sharing). This files must stay in the following location: "\<main-project-dir\>/models/PGPR/tmp/\<dataset-name\>"  
 Instead if you wish to use this framework with other path-based explanable algorithm make sure to extract the paths and have them on this form:
 ## Requirements for Alpha Optimization
 In order to performe the reranking you would need a pred_path.csv. Files must follow this format:    
