@@ -194,7 +194,7 @@ def main():
     parser.add_argument('--epochs', type=int, default=50, help='Max number of epochs.')
     parser.add_argument('--batch_size', type=int, default=32, help='batch size.')
     parser.add_argument('--lr', type=float, default=1e-4, help='learning rate.')
-    parser.add_argument('--max_acts', type=int, default=2000, help='Max number of actions.')
+    parser.add_argument('--max_acts', type=int, default=250, help='Max number of actions.')
     parser.add_argument('--max_path_len', type=int, default=3, help='Max path length.')
     parser.add_argument('--gamma', type=float, default=0.99, help='reward discount factor.')
     parser.add_argument('--ent_weight', type=float, default=1e-3, help='weight factor for entropy loss')

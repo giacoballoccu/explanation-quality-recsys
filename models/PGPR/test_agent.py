@@ -15,8 +15,6 @@ from utils import *
 from extract_predicted_paths import *
 import pandas as pd
 
-from myutils import get_uidreview2uidkg, get_user2gender,get_user2age, get_user2occupation
-
 def evaluate(dataset_name, topk_matches, test_user_products):
     """Compute metrics for predicted recommendations.
     Args:
@@ -57,7 +55,7 @@ def evaluate(dataset_name, topk_matches, test_user_products):
         ),
 
     )
-    uid2gender, gender2name = get_user2gender()
+    #uid2gender, gender2name = get_user2gender(dataset_name)
     test_user_idxs = list(test_user_products.keys())
     for uid in test_user_idxs:
         if uid not in topk_matches or len(topk_matches[uid]) < 10:
@@ -84,15 +82,15 @@ def evaluate(dataset_name, topk_matches, test_user_products):
         hit = 1.0 if hit_num > 0.0 else 0.0
 
         # Based on attribute
-        attribute_val = uid2gender[uid]
-        gender = gender2name[attribute_val]
+#        attribute_val = uid2gender[uid]
+#        gender = gender2name[attribute_val]
         all = "Overall"
 
         # According to gender
-        metrics.ndcg[gender].append(ndcg)
-        metrics.recall[gender].append(recall)
-        metrics.precision[gender].append(precision)
-        metrics.hr[gender].append(hit)
+ #       metrics.ndcg[gender].append(ndcg)
+#        metrics.recall[gender].append(recall)
+ #       metrics.precision[gender].append(precision)
+ #       metrics.hr[gender].append(hit)
 
         # General
         metrics.ndcg[all].append(ndcg)
@@ -104,9 +102,9 @@ def evaluate(dataset_name, topk_matches, test_user_products):
         for group_id, values in groups_values.items():
             avg_metric_value = np.mean(values)
             n_users = len(values)
-            print("{} group  {}, noOfUser={}, PGPR {}={:.4f}".format(attribute_name, attribute2name[group_id], n_users, metric,
+            print("{} group  {}, noOfUser={}, PGPR {}={:.4f}".format(attribute_name, group_id, n_users, metric,
                                                                        avg_metric_value))
-            print("\n")
+        print("\n")
 
 
 def dcg_at_k(r, k, method=1):
@@ -121,7 +119,7 @@ def dcg_at_k(r, k, method=1):
     return 0.
 
 
-def ndcg_at_k(r, k, method=0):
+def ndcg_at_k(r, k, method=1):
     dcg_max = dcg_at_k(sorted(r, reverse=True), k, method)
     if not dcg_max:
         return 0.
@@ -216,7 +214,7 @@ def evaluate_paths(dataset_name, path_file, train_labels, test_labels, degrees):
     movie_embeds = embeds[MOVIE] if dataset_name == "ml1m" else embeds[SONG]
     scores = np.dot(user_embeds + watched_embeds, movie_embeds.T)
     uid2gender, _ = get_user2gender(dataset_name)
-    review_uid2kg_uid, uid_kg2uid_review = get_uidreview2uidkg(dataset_name)
+    review_uid2kg_uid = get_uid_to_kgid_mapping(dataset_name)
     # 1) Get all valid paths for each user, compute path score and path probability.
     results = pickle.load(open(path_file, 'rb'))
     pred_paths = {uid: {} for uid in test_labels}
@@ -257,10 +255,10 @@ def evaluate_paths(dataset_name, path_file, train_labels, test_labels, degrees):
             if pid in train_pids:
                 continue
             # Get the path with highest probability
-            sorted_path = sorted(pred_paths[uid][pid], key=lambda x: x[1], reverse=True)
+            sorted_path = sorted(pred_paths[uid][pid], key=lambda x: x[0], reverse=True)
             best_pred_paths[uid].append(sorted_path[0])
 
-    save_best_pred_paths(extracted_path_dir, best_pred_paths)
+    #save_best_pred_paths(extracted_path_dir, best_pred_paths)
 
     # 3) Compute top 10 recommended products for each user.
     sort_by = 'score'
@@ -309,10 +307,11 @@ def evaluate_paths(dataset_name, path_file, train_labels, test_labels, degrees):
                 n_of_ptype_before[ptype] = 0
             n_of_ptype_before[ptype] += 1
 
+
     #Save pred_labels and pred_explaination for assesment and reranking
     save_pred_labels(extracted_path_dir, pred_labels)
     save_pred_explainations(extracted_path_dir, pred_paths_top10, pred_labels)
-
+    '''
     #Get informations about diversity of paths
     new_diversity_score_male = []
     new_diversity_score_female = []
@@ -372,9 +371,9 @@ def evaluate_paths(dataset_name, path_file, train_labels, test_labels, degrees):
 
     #Get informations about time relevance
     interaction2timestamp, user2timestamp = get_interaction2timestamp(dataset_name)
-    save_user_interactions(extracted_path_dir, user2timestamp)
-    save_interactions_timestamps(extracted_path_dir, interaction2timestamp)
-    '''
+    #save_user_interactions(extracted_path_dir, user2timestamp)
+    #save_interactions_timestamps(extracted_path_dir, interaction2timestamp)
+
     with open("./evaluation/" + args.dataset + "/PGPR/user2timestamp.csv", 'w+', newline='') as user2timestamp_file:
         header = ["uid", "timestamps"]
         writer = csv.writer(user2timestamp_file)
@@ -392,8 +391,7 @@ def evaluate_paths(dataset_name, path_file, train_labels, test_labels, degrees):
                 writer.writerow([uid, pid, str(timestamp)])
     uid_pid_timestamp_file.close()
     return
-    '''
-    '''topk_time_relevance = []
+topk_time_relevance = []
     topk_time_relevance_male = []
     topk_time_relevance_female = []
     for uid in test_labels:
@@ -581,14 +579,14 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=123, help='random seed.')
     parser.add_argument('--gpu', type=str, default='0', help='gpu device.')
     parser.add_argument('--epochs', type=int, default=50, help='num of epochs.')
-    parser.add_argument('--max_acts', type=int, default=2000, help='Max number of actions.')
-    parser.add_argument('--max_path_len', type=int, default=4, help='Max path length.')
+    parser.add_argument('--max_acts', type=int, default=250, help='Max number of actions.')
+    parser.add_argument('--max_path_len', type=int, default=3, help='Max path length.')
     parser.add_argument('--gamma', type=float, default=0.99, help='reward discount factor.')
     parser.add_argument('--state_history', type=int, default=1, help='state history length')
     parser.add_argument('--hidden', type=int, nargs='*', default=[512, 256], help='number of samples')
     parser.add_argument('--add_products', type=boolean, default=False, help='Add predicted products up to 10')
-    parser.add_argument('--topk', type=list, nargs='*', default=[10,12,1], help='number of samples')
-    parser.add_argument('--run_path', type=boolean, default=False, help='Generate predicted path? (takes long time)')
+    parser.add_argument('--topk', type=list, nargs='*', default=[25,50,1], help='number of samples')
+    parser.add_argument('--run_path', type=boolean, default=True, help='Generate predicted path? (takes long time)')
     parser.add_argument('--run_eval', type=boolean, default=True, help='Run evaluation?')
     args = parser.parse_args()
 

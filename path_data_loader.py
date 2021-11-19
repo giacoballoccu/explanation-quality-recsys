@@ -12,19 +12,21 @@ class PathDataLoader(object):
         self.model_dir = "/PGPR"
         self.dataset_name = args.dataset
         self.agent_topk = args.agent_topk
-        if args.eval_baseline or args.opt in ["softED", "softES", "softETR"]:
+        if args.eval_baseline or args.opt in ["softETD", "softSEP", "softLIR"]:
             self.load_uid_topk()
             self.load_uid_pid_path()
         else:
-            self.uid_topk = {}
-            self.uid_pid_explanation = {}
+            #self.uid_topk = {}
+            #self.uid_pid_explanation = {}
+            self.load_uid_topk()
+            self.load_uid_pid_path()
         self.load_pred_paths()
         self.uid_pid_timestamp, self.uid_timestamp = get_interaction2timestamp(self.dataset_name)
 
         #Dependent by the model
         self.test_labels = load_labels(self.dataset_name, 'test')
-        self.generate_ES_matrix()
-        self.generate_ETR_matrix()
+        self.generate_SEP_matrix()
+        self.generate_LIR_matrix()
 
     # Returns a dict that map the uid to the topk obtained by the models
     def load_uid_topk(self):
@@ -41,7 +43,7 @@ class PathDataLoader(object):
 
     # Returns a dict of dict where every uid pid represent the list of paths starting from a user ending in a given product
     def load_uid_pid_path(self):
-        self.uid_pid_explanation = {}
+        self.uid_pid_explaination = {}
         uid_pid_path_topk_file = open("paths/" + self.dataset_name + "/agent_topk=" + self.agent_topk + "/uid_pid_explanation.csv")
         reader = csv.reader(uid_pid_path_topk_file, delimiter=",")
         next(reader, None)
@@ -50,14 +52,13 @@ class PathDataLoader(object):
             pid = int(row[1])
             normalized_path = normalize_path(row[2])
 
-            if uid not in self.uid_pid_explanation:
-                self.uid_pid_explanation[uid] = {}
-            if pid not in self.uid_pid_explanation[uid]:
-                self.uid_pid_explanation[uid][pid] = []
+            if uid not in self.uid_pid_explaination:
+                self.uid_pid_explaination[uid] = {}
+            if pid not in self.uid_pid_explaination[uid]:
+                self.uid_pid_explaination[uid][pid] = []
 
-            self.uid_pid_explanation[uid][pid] = normalized_path
+            self.uid_pid_explaination[uid][pid] = normalized_path
         uid_pid_path_topk_file.close()
-        return self.uid_pid_explanation
 
     # Returns a dict where every
     def load_pred_paths(self):
@@ -79,7 +80,7 @@ class PathDataLoader(object):
             self.pred_paths[uid][pid].append([path_score, path_prob, normalized_path])
 
         uid_pid_path_topk_file.close()
-        return self.pred_paths
+        #return self.pred_paths
 
     def load_best_pred_paths(self):
         self.best_pred_paths = {}
@@ -100,59 +101,66 @@ class PathDataLoader(object):
             self.best_pred_paths[uid][pid].append([path_score, path_prob, normalized_path])
 
         uid_pid_path_topk_file.close()
-        return self.best_pred_paths
+        #return self.best_pred_paths
 
-    def generate_ETR_matrix(self):
-        self.ETR_matrix = {}
-        time_relevance_matrix = {}
+    def generate_LIR_matrix(self):
+        self.LIR_matrix = {}
+        LIR_matrix = {}
         for uid in self.test_labels:
             timestamp_tr_value = {}
-            if uid not in self.uid_timestamp: continue #77 invalid users for lastfm
+            if uid not in self.uid_timestamp:
+                continue
             self.uid_timestamp[uid].sort()
             def normalized_ema(values):
                 values = np.array([i for i in range(len(values))])
                 values = pd.Series(values)
-                ema_vals = values.ewm(span=10).mean().tolist() #CHECKKKKKKKKKKKKK
+                ema_vals = values.ewm(span=10).mean().tolist()
                 min_res = min(ema_vals)
                 max_res = max(ema_vals)
                 return [(x - min_res) / (max_res - min_res) for x in ema_vals]
 
-            ema_timestamps = normalized_ema(self.uid_timestamp[uid]) if len(self.uid_timestamp[uid]) > 1 else [0.5]
+            if len(self.uid_timestamp[uid]) <= 1: #Skips users with only one review in train (can happen with lastfm)
+                continue
+            ema_timestamps = normalized_ema(self.uid_timestamp[uid])
             for idx, timestamp in enumerate(self.uid_timestamp[uid]):
                 timestamp_tr_value[timestamp] = ema_timestamps[idx]
-            time_relevance_matrix[uid] = timestamp_tr_value
-        self.ETR_matrix = time_relevance_matrix
+            LIR_matrix[uid] = timestamp_tr_value
+        self.LIR_matrix = LIR_matrix
 
-    def generate_ES_matrix(self):
+    def generate_SEP_matrix(self):
         # Precompute entity distribution
-        exp_serentipety_matrix = {}
+        SEP_matrix = {}
         degrees = load_kg(self.dataset_name).degrees
         for type, eid_indegree in degrees.items():
             pid_indegree_list = []
+            biggest_indegree_value = float("-inf")
+            smallest_indegree_value = float("inf")
             for pid, indegree in eid_indegree.items():
-                pid_indegree_list.append(indegree)  # idx = pid
+                biggest_indegree_value = max(indegree, biggest_indegree_value)
+                smallest_indegree_value = min(indegree, smallest_indegree_value)
+                pid_indegree_list.append([pid,indegree])  # idx = pid
 
             #Normalize indegree between 0 and 1
             normalized_indegree_list = [
-                (indegree - min(pid_indegree_list)) / (max(pid_indegree_list) - min(pid_indegree_list)) for indegree in
+                [x[0], (x[1] - smallest_indegree_value) / (biggest_indegree_value - smallest_indegree_value)] for x in
                 pid_indegree_list]
 
-            #Generate function tha maps indegree value between 0-1 to ES value
-            def get_weigths(normalized_indegree_list):
-                a, b = 5, 2
-                mean, var, skew, kurt = beta.stats(a, b, moments='mvsk')
-                x = np.linspace(beta.ppf(0, a, b),
-                                beta.ppf(1, a, b), len(set(normalized_indegree_list)))
-                y = beta.pdf(x, a, b) / max(beta.pdf(x, a, b))
+            normalized_indegree_list.sort(key=lambda x: x[1])
+            def normalized_ema(values):
+                values = np.array([x for x in range(len(values))])
+                values = pd.Series(values)
+                ema_vals = values.ewm(span=10).mean().tolist()
+                min_res = min(ema_vals)
+                max_res = max(ema_vals)
+                return [(x - min_res) / (max_res - min_res) for x in ema_vals]
 
-                return y, x
-
-            x, y = get_weigths(normalized_indegree_list)
+            ema_es = normalized_ema([x[1] for x in normalized_indegree_list])
             pid_weigth = {}
-            for pid, indegree in enumerate(normalized_indegree_list):
-                index = np.argmin(np.abs(x - indegree))
-                pid_weigth[pid] = y[index]
-            exp_serentipety_matrix[type] = pid_weigth
-        self.ES_matrix = exp_serentipety_matrix
+            for idx in range(len(ema_es)):
+                pid = normalized_indegree_list[idx][0]
+                pid_weigth[pid] = ema_es[idx]
+
+            SEP_matrix[type] = pid_weigth
+        self.SEP_matrix = SEP_matrix
 
 

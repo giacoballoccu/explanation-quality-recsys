@@ -35,10 +35,16 @@ class LastFmDatasetMapper(object):
 
         train = []
         test = []
+        discarted_users = 0
+        th = 5
         for uid, reviews in uid_review_tuples.items():  # python dict are sorted, 1...nuser
+            #if len(reviews) < th:
+            #    discarted_users += 1
+            #    continue
             n_elements_test = int(len(reviews) * train_size)
             train.append(reviews[:n_elements_test])
             test.append(reviews[n_elements_test:])
+        print("Discarted", discarted_users, "users with <", th, "interactions")
 
         print("Writing train...")
         with open(DATASET_DIR[dataset_name] + "/train.txt", 'w+') as file:
@@ -145,8 +151,23 @@ class LastFmDatasetMapper(object):
         # Write user_age mapping
         with open(DATASET_DIR[dataset_name] + "/mappings/uid2age_map.txt", 'w+') as file:
             for uid, attributes in uid_attributes.items():
-                age = attributes[1]
-                file.write(uid + "\t" + age + "\n")
+                age = int(attributes[1])
+                if age < 18:
+                    age_range = 1
+                elif age >= 18 and age <= 24:
+                    age_range = 18
+                elif age >= 25 and age <= 34:
+                    age_range = 25
+                elif age >= 35 and age <= 44:
+                    age_range = 35
+                elif age >= 45 and age <= 49:
+                    age_range = 45
+                elif age >= 50 and age <= 55:
+                    age_range = 50
+                else:
+                    age_range = 56
+                #{1: "Under 18", 18: "18-24", 25: "25-34", 35: "35-44", 45: "45-49", 50: "50-55", 56: "56+"}
+                file.write(uid + "\t" + str(age_range) + "\n")
         file.close()
 
         #Write user_gender mapping
@@ -155,6 +176,16 @@ class LastFmDatasetMapper(object):
                 gender = attributes[2]
                 file.write(uid + "\t" + gender + "\n")
         file.close()
+    def get_valid_users(self, args):
+        dataset_name = self.args.dataset
+        valid_users = set()
+        users_file = open(DATASET_DIR[dataset_name] + "/users.dat", "r")
+        reader = csv.reader(users_file)
+        next(reader, None)
+        for row in reader:
+            uid = int(row[0])
+            valid_users.add(uid)
+        return valid_users
 
     def generate_kg_entities(self):
         dataset_name = self.args.dataset
@@ -223,6 +254,7 @@ class LastFmDatasetMapper(object):
         #print(invalid, count)
 
         review_uid_kg_uid = {}
+        valid_users = self.get_valid_users(args)
         # Write user entity
         with open(KG_COMPLETATION_DATASET_DIR[dataset_name] + "/user_list.txt", 'r') as file:
             csv_reader = csv.reader(file, delimiter=' ')
@@ -230,8 +262,8 @@ class LastFmDatasetMapper(object):
             with open(entity_path + "/user.txt", 'w+') as file:
                 for row in csv_reader:
                     review_uid = int(row[0])
-                    kg_uid = int(row[1])
-                    if review_uid in kg_entities.user[0]: continue
+                    kg_uid = int(row[1])+1
+                    if review_uid in kg_entities.user[0] or review_uid not in valid_users: continue
                     kg_entities.user[0].add(review_uid)
                     review_uid_kg_uid[review_uid] = kg_uid
                     file.writelines(str(kg_uid))
@@ -239,11 +271,11 @@ class LastFmDatasetMapper(object):
         file.close()
         zip_file(entity_path + "user.txt")
 
-        with open(DATASET_DIR[dataset_name] + "/mappings/review_uid_kg_uid_mapping.txt", 'w+') as file:
+        with open(DATASET_DIR[dataset_name] + "/mappings/user_mappings.txt", 'w+') as file:
             header = ["kgid", "lastfmid"]
             file.write(' '.join(header) + "\n")
             for review_id, kg_id in review_uid_kg_uid.items():
-                file.write('\t'.join([str(review_id), str(kg_id), "\n"]))
+                file.write('\t'.join([str(kg_id), str(review_id), "\n"]))
         file.close()
 
         #Populate movie entity file (Done by itself due to is different structure)
@@ -296,21 +328,51 @@ class LastFmDatasetMapper(object):
 class ML1MDatasetMapper(object):
     def __init__(self, args):
         self.args = args
-        self.generate_train_test_split()
-        self.generate_dbid_mlid_mapping()
+        self.generate_dbpid_mlpid_mapping()
         self.generate_kg_entities()
         self.generate_kg_relations()
         self.generate_user_attributes_mappings()
+        self.generate_train_test_split()
+
+    def generate_dbpid_mlpid_mapping(self):
+        dataset_name = self.args.dataset
+        file = open(DATASET_DIR[dataset_name] + "/joint-kg/i2kg_map.tsv", "r")
+        dburl_to_mlid = {}
+        reader = csv.reader(file, delimiter="\t")
+        for row in reader:
+            mlid = int(row[0])
+            name = row[1]
+            dburl = row[2]
+            dburl_to_mlid[dburl] = [mlid, name]
+        file.close()
+
+        file = open(DATASET_DIR[dataset_name] + "/joint-kg/kg/e_map.dat", "r", encoding='latin-1')
+        fileo = open(DATASET_DIR[dataset_name] + "/mappings/product_mappings.txt", "w+")
+        writer = csv.writer(fileo, delimiter="\t")
+        header = ["mlid", "dbid", "name", "dburl"]
+        writer.writerow(header)
+        reader = csv.reader(file, delimiter="\t")
+        for row in reader:
+            dbid = int(row[0])
+            dburl = row[1]
+            if dburl not in dburl_to_mlid: continue
+            mlid = dburl_to_mlid[dburl][0]
+            name = dburl_to_mlid[dburl][1]
+            writer.writerow([mlid, dbid, name, dburl])
+        file.close()
+        fileo.close()
 
     def generate_train_test_split(self):
         dataset_name = self.args.dataset
         uid_review_tuples = {}
         dataset_size = 0
+        valid_movies = get_valid_movies(dataset_name)
         print("Loading reviews...")
         with open(DATASET_DIR[dataset_name] + "/ratings.dat", 'r', encoding='latin-1') as reviews_file:
             reader = csv.reader(reviews_file, delimiter='\n')
             for row in reader:
                 row = ''.join(row).strip().split("::")
+                if int(row[1]) not in valid_movies: continue
                 if row[0] not in uid_review_tuples:
                     uid_review_tuples[row[0]] = []
                 uid_review_tuples[row[0]].append((row[0], row[1], row[2], row[3]))
@@ -323,10 +385,16 @@ class ML1MDatasetMapper(object):
 
         train = []
         test = []
+        discarted_users = 0
+        th = 5
         for uid, reviews in uid_review_tuples.items():  # python dict are sorted, 1...nuser
+            if len(reviews) < th:
+                discarted_users += 1
+                continue
             n_elements_test = int(len(reviews) * train_size)
             train.append(reviews[:n_elements_test])
             test.append(reviews[n_elements_test:])
+        print("Discarted", discarted_users, "users with <", th, "interactions")
 
         print("Writing train...")
         with open(DATASET_DIR[dataset_name] + "/train.txt", 'w+') as file:
@@ -399,48 +467,37 @@ class ML1MDatasetMapper(object):
             editor=(set(), 'editor.txt'),
             writter=(set(), 'writter.txt'),
             cinematographer=(set(), 'cinematographer.txt'),
+            composer=(set(), 'composer.txt'),
         )
         entity_path = DATASET_DIR[dataset_name] + "/entities/"
         if not os.path.isdir(entity_path):
             os.makedirs(entity_path)
 
-        file = open(DATASET_DIR[dataset_name] + "/mappings/movie_dbid2mlid.txt", "r")
-        csv_reader = csv.reader(file, delimiter='\n')
-        dbid2mlid = {}
-        mlid2dbid = {}
-        for i, row in enumerate(csv_reader):
+        file = open(DATASET_DIR[dataset_name] + "/mappings/product_mappings.txt", "r")
+        reader = csv.reader(file, delimiter='\n')
+        db_pid2ml_pid = {}
+        ml_pid2db_pid = {}
+        ml_pid2metada = {}
+        next(reader, None)
+        for i, row in enumerate(reader):
             row = row[0].strip().split("\t")
-            dbid2mlid[int(row[1])] = int(row[0])
-            mlid2dbid[int(row[0])] = int(row[1])
+            db_pid2ml_pid[int(row[1])] = int(row[0])
+            ml_pid2db_pid[int(row[0])] = int(row[1])
+            ml_pid2metada[int(row[0])] = [row[2], row[3]]
         file.close()
-
-        file = open(DATASET_DIR[dataset_name] + "/mappings/MappingMovielens2DBpedia-1.2.tsv", 'r')
-        csv_reader = csv.reader(file, delimiter='\n')
-        mlid2entityname = {}
-        for row in csv_reader:
-            row = row[0].strip().split("\t")
-            mlid2entityname[int(row[0])] = row[1]
-        file.close()
-
-        file = open(KG_COMPLETATION_DATASET_DIR[dataset_name] + "/kg/e_map.dat", 'r')
-        csv_reader = csv.reader(file, delimiter='\t')
-        mlid2entityname = {}
-        for row in csv_reader:
-            mlid2entityname[int(row[0])] = row[1]
-        file.close()
-
+        kg_entities['movie'][0] = set(ml_pid2db_pid.keys())
         with open(KG_COMPLETATION_DATASET_DIR[dataset_name] + "/dataset.dat", 'r') as file:
             csv_reader = csv.reader(file, delimiter='\t')
             for row in csv_reader:
                 head = int(row[0])
                 tail = row[1]
                 relation = int(row[2])
-                if head not in dbid2mlid: continue
+                if head not in db_pid2ml_pid: continue
 
-                movie_id = dbid2mlid[head]
+                #movie_id = db_pid2ml_pid[head]
                 tail_name = get_tail_entity_name(dataset_name, relation) #Retriving what is the tail of that relation
 
-                kg_entities['movie'][0].add(movie_id)
+                #kg_entities['movie'][0].add(movie_id)
                 kg_entities[tail_name][0].add(tail)
         file.close()
 
@@ -452,13 +509,22 @@ class ML1MDatasetMapper(object):
                 uid = int(row[0])
                 kg_entities.user[0].add(uid)
 
+        new_id2old_id = {}
         with open(entity_path + "/user.txt", 'w+') as file:
-            for u in kg_entities.user[0]:
-                file.writelines(str(u))
+            for idx, u in enumerate(kg_entities.user[0]):
+                new_id2old_id[idx] = int(u)
+                file.writelines(str(idx))
                 file.write("\n")
         file.close()
 
         zip_file(entity_path + "/user.txt")
+
+        with open(DATASET_DIR[dataset_name] + "/mappings/user_mappings.txt", 'w+') as file:
+            header = ["kg_id", "ml1m_id"]
+            file.write('\t'.join(header) + "\n")
+            for new_id, old_id in new_id2old_id.items():
+                file.write(str(new_id) + '\t' + str(old_id) + "\n")
+        file.close()
 
         #Populate movie entity file (Done by itself due to is different structure)
         new_id2old_id = {}
@@ -470,15 +536,23 @@ class ML1MDatasetMapper(object):
 
         # newId (0...n), oldId(movilandID), entityId(jointkgentityid), entityNameDBPEDIA
         with open(DATASET_DIR[dataset_name] + "/mappings/product_mappings.txt", 'w+') as file:
-            header = ["kg_id", "ml1m_id", "kg_completion_id", "dbpedia_url"]
-            file.write('\t'.join(header))
+            header = ["kg_id", "ml1m_id", "db_id", "name", "dbpedia_url"]
+            file.write('\t'.join(header) + "\n")
             for new_id, old_id in new_id2old_id.items():
-                entity_id = mlid2dbid[old_id]
-                movie_dblink = mlid2entityname[old_id]
-                file.write(str(new_id) + '\t' + str(old_id) + '\t' + str(entity_id) + '\t' + movie_dblink + "\n")
+                entity_id = ml_pid2db_pid[old_id]
+                file.write("\t".join([str(new_id), str(old_id), str(entity_id), ml_pid2metada[old_id][0], ml_pid2metada[old_id][1] + "\n"]))
         file.close()
 
         zip_file(entity_path + "/movie.txt")
+
+        #Retrive the dblink associated to the entity id in the kg completion
+        entity_id2dblink = {}
+        entity_file = open(DATASET_DIR[dataset_name] + "/joint-kg/kg/e_map.dat", "r", encoding='latin-1')
+        reader = csv.reader(entity_file, delimiter="\t")
+        for row in reader:
+            eid = int(row[0])
+            dblink = row[1]
+            entity_id2dblink[eid] = dblink
 
         #Populating other entities
         for entity_name in get_entities_without_user(dataset_name):
@@ -494,8 +568,10 @@ class ML1MDatasetMapper(object):
 
             # newId (0...n), entityId(jointkgentityid), entityNameDBPEDIA
             with open(DATASET_DIR[dataset_name] + "/mappings/" + entity_name + 'id2dbid.txt', 'w+') as file:
+                header = ["kgid", "dbid", "dblink"]
+                file.write("\t".join(header) + "\n")
                 for new_id, old_id in new_id2old_id.items():
-                    entity_dblink = mlid2entityname[old_id]
+                    entity_dblink = entity_id2dblink[old_id]
                     file.write(str(new_id) + '\t' + str(old_id) + '\t' + entity_dblink + "\n")
             file.close()
 
@@ -509,7 +585,8 @@ class ML1MDatasetMapper(object):
         no_of_movies = len(mappings['movie'])+1
         movie_id_entity = edict(
             production_company=([[] for _ in range(no_of_movies)], DATASET_DIR[dataset_name] + '/relations/produced_by_company_m_pc.txt'),
-            category=([[] for _ in range(no_of_movies)], DATASET_DIR[dataset_name] + '/relations/belong_to_p_ca.txt'),
+            composer=([[] for _ in range(no_of_movies)], DATASET_DIR[dataset_name] + '/relations/composed_by_m_c.txt'),
+            category=([[] for _ in range(no_of_movies)], DATASET_DIR[dataset_name] + '/relations/belong_to_m_ca.txt'),
             director=([[] for _ in range(no_of_movies)], DATASET_DIR[dataset_name] + '/relations/directed_by_m_d.txt'),
             actor=([[] for _ in range(no_of_movies)], DATASET_DIR[dataset_name] + '/relations/starring_m_a.txt'),
             cinematographer=([[] for _ in range(no_of_movies)], DATASET_DIR[dataset_name] + '/relations/cinematography_m_ci.txt'),
@@ -520,25 +597,32 @@ class ML1MDatasetMapper(object):
         relations_path = DATASET_DIR[dataset_name] + "/relations/"
         if not os.path.isdir(relations_path):
             os.makedirs(relations_path)
-
+        invalid = 0
         print("Inserting relations inside buckets...\n")
         with open(KG_COMPLETATION_DATASET_DIR[dataset_name] + '/dataset.dat', 'r') as file:
             csv_reader = csv.reader(file, delimiter='\n')
             for row in csv_reader:
                 row = row[0].strip().split("\t")
-                row[0] = int(row[0])
-                if row[0] not in mappings['movie']: continue
-                head = mappings['movie'][row[0]][0] #id of the movie in the kg
+                db_pid = int(row[0])
+                if db_pid not in mappings['movie']:
+                    invalid += 1
+                    continue
+                head = mappings['movie'][db_pid][0] #id of the movie in the kg
                 tail = int(row[1])
                 relation = int(row[2])
 
-                if relation not in SELECTED_RELATIONS[dataset_name]: continue
+                if relation not in SELECTED_RELATIONS[dataset_name]:
+                    invalid += 1
+                    continue
                 tail_entity_name = get_tail_entity_name(dataset_name, relation)
-                if tail not in mappings[tail_entity_name]: continue
+                if tail not in mappings[tail_entity_name]:
+                    invalid += 1
+                    continue
                 kg_id_tail = mappings[tail_entity_name][tail]
                 movie_id_entity[tail_entity_name][0][head].append(kg_id_tail)
         file.close()
 
+        print("Invalid relationships:", invalid)
         for entitity_name in get_entities_without_user(dataset_name):
             if entitity_name == 'movie': continue
             relationship_filename = movie_id_entity[entitity_name][1]
@@ -550,40 +634,6 @@ class ML1MDatasetMapper(object):
                     file.writelines(s)
                     file.write("\n")
             zip_file(relationship_filename)
-
-    def generate_dbid_mlid_mapping(self):
-        dataset_name = args.dataset
-        dblink_id = {}
-        dbid_mlid = {}
-        tsv_file = open(KG_COMPLETATION_DATASET_DIR[dataset_name] + "/i2kg_map.tsv")
-        read_tsv = csv.reader(tsv_file, delimiter="\t")
-        for row in read_tsv:
-            #print(row)
-            dblink_id[row[2]] = [row[0], row[1]]
-        tsv_file.close()
-
-        count = 0
-        hit = 0
-        dat_file = open(KG_COMPLETATION_DATASET_DIR[dataset_name] + "/kg/e_map.dat")
-        read_dat = csv.reader(dat_file, delimiter="\t")
-        for row in read_dat:
-            if row[1] not in dblink_id:
-                #print("Not a movie #" + str(count))
-                count = count+1
-            else:
-                #print("Movie #" + str(hit))
-                hit = hit + 1
-                dbid_mlid[row[0]] = int(dblink_id[row[1]][0])
-        dat_file.close()
-        dbid_mlid_sorted = {k: v for k, v in sorted(dbid_mlid.items(), key=lambda item: item[1])}
-        #K is the id in movielands v is the id in entities
-        with open(DATASET_DIR[dataset_name] + "/mappings/movie_dbid2mlid.txt", 'w+') as file:
-            for k,v in dbid_mlid_sorted.items():
-                file.writelines(str(v) + "\t" + k)
-                file.write("\n")
-        file.close()
-
-
 
 def unify_dataset(args):
     dataset_name = args.dataset
@@ -626,7 +676,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, default=ML1M, help='One of {ML1M, LASTFM}')
     args = parser.parse_args()
 
-
+    #unify_dataset(args)
     if args.dataset == ML1M:
         ML1MDatasetMapper(args)
     elif args.dataset == LASTFM:

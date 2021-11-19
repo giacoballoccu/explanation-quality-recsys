@@ -21,32 +21,18 @@ def ndcg_at_k(r, k, method=0):
     return dcg_at_k(r, k, method) / dcg_max
 
 def measure_rec_quality(path_data):
-    uid2gender, gender2name = get_user2gender(path_data.dataset_name)
+    attribute_list = get_attribute_list(path_data.dataset_name)
+    metrics_names = ["ndcg", "hr", "recall", "precision"]
+    metrics = edict()
+    for metric in metrics_names:
+        metrics[metric] = {"Overall": []}
+        for values in attribute_list.values():
+            attribute_to_name = values[1]
+            for _, name in attribute_to_name.items():
+                metrics[metric][name] = []
+
     topk_matches = path_data.uid_topk
     test_labels = path_data.test_labels
-    metrics = edict(
-        ndcg=edict(
-            Male=[],
-            Female=[],
-            Overall=[]
-        ),
-        hr=edict(
-            Male=[],
-            Female=[],
-            Overall=[]
-        ),
-        precision=edict(
-            Male=[],
-            Female=[],
-            Overall=[]
-        ),
-        recall=edict(
-            Male=[],
-            Female=[],
-            Overall=[]
-        ),
-
-    )
 
     test_user_idxs = list(test_labels.keys())
     invalid_users = []
@@ -76,251 +62,265 @@ def measure_rec_quality(path_data):
         hit = 1.0 if hit_num > 0.0 else 0.0
 
         # Based on attribute
-        attribute_val = uid2gender[uid]
-        gender = gender2name[attribute_val]
-        all = "Overall"
-
-        # According to gender
-        metrics.ndcg[gender].append(ndcg)
-        metrics.recall[gender].append(recall)
-        metrics.precision[gender].append(precision)
-        metrics.hr[gender].append(hit)
-
-        # General
-        metrics.ndcg[all].append(ndcg)
-        metrics.hr[all].append(hit)
-        metrics.recall[all].append(recall)
-        metrics.precision[all].append(precision)
+        for attribute in attribute_list.keys():
+            if uid not in attribute_list[attribute][0]: continue
+            attr_value = attribute_list[attribute][0][uid]
+            if attr_value not in attribute_list[attribute][1]: continue #Few users may have the attribute missing (LASTFM)
+            attr_name = attribute_list[attribute][1][attr_value]
+            metrics["ndcg"][attr_name].append(ndcg)
+            metrics["recall"][attr_name].append(recall)
+            metrics["precision"][attr_name].append(precision)
+            metrics["hr"][attr_name].append(hit)
+        metrics["ndcg"]["Overall"].append(ndcg)
+        metrics["recall"]["Overall"].append(recall)
+        metrics["precision"]["Overall"].append(precision)
+        metrics["hr"]["Overall"].append(hit)
 
     return metrics
 
-def print_rec_metrics(metrics):
-    print("Recommandation quality:")
-    for metric_name, groups_values in metrics.items():
-        for group_name, group_values in groups_values.items():
-            average = np.mean(group_values)
-            print("Average {} {} noOfUsers {}: {:.3f} ".format(metric_name, group_name, len(group_values), average), end = ' | ')
-        print()
+def print_rec_metrics(dataset_name, metrics):
+    attribute_list = get_attribute_list(dataset_name)
+
+    print("\n---Recommandation Quality---")
+    print("Average for the entire user base:", end=" ")
+    for metric, values in metrics.items():
+        print("{}: {:.3f}".format(metric, np.array(values["Overall"]).mean()), end=" | ")
+    print("")
+
+    for attribute_category, values in attribute_list.items():
+        print("\n-Statistic with user grouped by {} attribute".format(attribute_category))
+        for attribute in values[1].values():
+            print("{} group".format(attribute), end=" ")
+            for metric_name, groups_values in metrics.items():
+                print("{}: {:.3f}".format(metric_name, np.array(groups_values[attribute]).mean()), end=" | ")
+            print("")
+    print("\n")
 
 """
 Explanation metrics
 """
-def topk_diversity_score(path_data):
-    diversity_scores = {}
+def topk_ETD(path_data):
+    ETDs = {}
     for uid, topk in path_data.uid_topk.items():
         if uid not in path_data.test_labels: continue
         unique_path_types = set()
         for pid in topk:
-            if pid not in path_data.uid_pid_explanation[uid]:
-                #print("strano 3")
+            if pid not in path_data.uid_pid_explaination[uid]:
                 continue
-            current_path = path_data.uid_pid_explanation[uid][pid]
+            current_path = path_data.uid_pid_explaination[uid][pid]
             path_type = get_path_type(current_path)
             unique_path_types.add(path_type)
-        diversity_score = len(unique_path_types) / TOTAL_PATH_TYPES[path_data.dataset_name]
-        diversity_scores[uid] = diversity_score
-    return diversity_scores
+        ETD = len(unique_path_types) / TOTAL_PATH_TYPES[path_data.dataset_name]
+        ETDs[uid] = ETD
+    return ETDs
 
-def avg_diversity_score(path_data, attribute_name="Gender"):
-    uid_diversity_scores = topk_diversity_score(path_data)
-    if attribute_name == "Gender":
-        user2attribute, attribute2name = get_user2gender(path_data.dataset_name)
-    elif attribute_name == "Age":
-        user2attribute, attribute2name = get_user2age()
-    elif attribute_name == "Occupation":
-        user2attribute, attribute2name = get_user2occupation()
+def get_attribute_list(dataset_name):
+    if dataset_name == "ml1m":
+        attribute_list = {"Gender": [], "Age": [], "Occupation": []}
+    elif dataset_name == "lastfm":
+        attribute_list = {"Gender": [], "Age": []}
     else:
-        print("The attribute selected doesn't exist.")
+        print("The dataset selected doesn't exist.")
         return
-    avg_groups_explanation_diversity = {}
-    groups_explanation_diversity_scores = {"Overall": []}
 
-    for _, attribute_label in attribute2name.items():
-        groups_explanation_diversity_scores[attribute_label] = []
+    for attribute in attribute_list.keys():
+        if attribute == "Gender":
+            user2attribute, attribute2name = get_user2gender(dataset_name)
+        elif attribute == "Age":
+            user2attribute, attribute2name = get_user2age(dataset_name)
+        elif attribute == "Occupation":
+            user2attribute, attribute2name = get_user2occupation(dataset_name)
+        else:
+            print("Unknown attribute")
+        attribute_list[attribute] = [user2attribute, attribute2name]
+    return attribute_list
 
-    for uid, diversity_score in uid_diversity_scores.items():
-        attr_value = user2attribute[uid]
-        attr_name = attribute2name[attr_value]
-        groups_explanation_diversity_scores[attr_name].append(diversity_score)
-        groups_explanation_diversity_scores["Overall"].append(diversity_score)
+def avg_ETD(path_data):
+    uid_ETDs = topk_ETD(path_data)
 
-    for attribute_label, group_explanation_diversity_scores in groups_explanation_diversity_scores.items():
-        avg_groups_explanation_diversity[attribute_label] = np.array(group_explanation_diversity_scores).mean()
+    attribute_list = get_attribute_list(path_data.dataset_name)
+    avg_groups_ETD = {}
+    groups_ETD_scores = {}
+    for attribute in attribute_list.keys():
+        if "Overall" not in groups_ETD_scores:
+            groups_ETD_scores["Overall"] = []
+        for _, attribute_label in attribute_list[attribute][1].items():
+            groups_ETD_scores[attribute_label] = []
 
-    avg_groups_explanation_diversity["Overall"] = np.array(groups_explanation_diversity_scores["Overall"]).mean()
+    for uid, ETD in uid_ETDs.items():
+        for attribute in attribute_list.keys():
+            if uid not in attribute_list[attribute][0]: continue
+            attr_value = attribute_list[attribute][0][uid]
+            if attr_value not in attribute_list[attribute][1]: continue #Few users may have the attribute missing (LASTFM)
+            attr_name = attribute_list[attribute][1][attr_value]
+            groups_ETD_scores[attr_name].append(ETD)
+        groups_ETD_scores["Overall"].append(ETD)
+
+
+    for attribute_label, group_scores in groups_ETD_scores.items():
+        avg_groups_ETD[attribute_label] = np.array(group_scores).mean()
+
 
     diversity_results = edict(
-        avg_groups_explanation_diversity=avg_groups_explanation_diversity,
-        groups_explanation_diversity_scores=groups_explanation_diversity_scores
+        avg_groups_ETD=avg_groups_ETD,
+        groups_ETD_scores=groups_ETD_scores
     )
     return diversity_results
 
-#Extract the value of ETR for the given user item path from the ETR_matrix
-def explanation_time_relevance_single(path_data, path):
+#Extract the value of LIR for the given user item path from the LIR_matrix
+def LIR_single(path_data, path):
     uid = int(path[0][-1])
+    if uid not in path_data.uid_timestamp or uid not in path_data.LIR_matrix or len(path_data.uid_timestamp[uid]) <= 1: return 0.
     path_data.uid_timestamp[uid].sort()
 
     predicted_path = path
     interaction = int(get_interaction_id(predicted_path))
+    if interaction not in path_data.uid_pid_timestamp[uid]: return 0.0
     interaction_timestamp = path_data.uid_pid_timestamp[uid][interaction]
 
-    time_relevance_ans = path_data.ETR_matrix[uid][interaction_timestamp]
+    LIR_ans = path_data.LIR_matrix[uid][interaction_timestamp] if interaction_timestamp in path_data.LIR_matrix[uid] else 0.0
 
-    return time_relevance_ans
+    return LIR_ans
 
 
 
-# Returns a dict where to every uid is associated a value of time_relevance calculated based on his topk
-def topk_explanation_time_relevance(path_data):
-    time_relevance_topk = {}
+# Returns a dict where to every uid is associated a value of LIR calculated based on his topk
+def topk_LIR(path_data):
+    LIR_topk = {}
 
     # Precompute user timestamps weigths
-    time_relevance_matrix = path_data.ETR_matrix
+    LIR_matrix = path_data.LIR_matrix
 
     #print(len(path_data.test_labels))
     count = 0
     count_pid = 0
     for uid in path_data.test_labels:
-        time_relevance_single_topk = []
-        if uid not in time_relevance_matrix or uid not in path_data.uid_topk:
+        LIR_single_topk = []
+        if uid not in LIR_matrix or uid not in path_data.uid_topk:
             continue
         for pid in path_data.uid_topk[uid]:
             count_pid += 1
-            if pid not in path_data.uid_pid_explanation[uid]:
+            if pid not in path_data.uid_pid_explaination[uid]:
                 count += 1
                 continue
-            predicted_path = path_data.uid_pid_explanation[uid][pid]
+            predicted_path = path_data.uid_pid_explaination[uid][pid]
             interaction = int(get_interaction_id(predicted_path))
             if interaction not in path_data.uid_pid_timestamp[uid]: continue
             interaction_timestamp = path_data.uid_pid_timestamp[uid][interaction]
-            time_relevance = time_relevance_matrix[uid][interaction_timestamp]
-            time_relevance_single_topk.append(time_relevance)
+            LIR = LIR_matrix[uid][interaction_timestamp]
+            LIR_single_topk.append(LIR)
 
-        time_relevance_topk[uid] = np.array(time_relevance_single_topk).mean() if len(time_relevance_single_topk) != 0 else 0
+        LIR_topk[uid] = np.array(LIR_single_topk).mean() if len(LIR_single_topk) != 0 else 0
     #print(count_pid, count)
-    return time_relevance_topk
+    return LIR_topk
 
 
-# Returns an avg value for the time_relevance of a given group
-def avg_explanation_time_relevance(path_data, attribute_name="Gender"):
-    topk_time_relevance_scores = topk_explanation_time_relevance(path_data)
-    if attribute_name == "Gender":
-        user2attribute, attribute2name = get_user2gender(path_data.dataset_name)
-    elif attribute_name == "Age":
-        user2attribute, attribute2name = get_user2age()
-    elif attribute_name == "Occupation":
-        user2attribute, attribute2name = get_user2occupation()
-    elif attribute_name == None:
-        pass
-    else:
-        print("The attribute selected doesn't exist.")
-        return
+# Returns an avg value for the LIR of a given group
+def avg_LIR(path_data, attribute_name="Gender"):
+    uid_LIR_score = topk_LIR(path_data)
+    attribute_list = get_attribute_list(path_data.dataset_name)
+    avg_groups_LIR = {}
+    groups_LIR_scores = {}
+    for attribute in attribute_list.keys():
+        if "Overall" not in groups_LIR_scores:
+            groups_LIR_scores["Overall"] = []
+        for _, attribute_label in attribute_list[attribute][1].items():
+            groups_LIR_scores[attribute_label] = []
 
-    avg_groups_time_relevance = {}
-    groups_time_relevance_scores = {"Overall": []}
+    for uid, LIR_score in uid_LIR_score.items():
+        for attribute in attribute_list.keys():
+            if uid not in attribute_list[attribute][0]: continue
+            attr_value = attribute_list[attribute][0][uid]
+            if attr_value not in attribute_list[attribute][1]: continue #Few users may have the attribute missing (LASTFM)
+            attr_name = attribute_list[attribute][1][attr_value]
+            groups_LIR_scores[attr_name].append(LIR_score)
+        groups_LIR_scores["Overall"].append(LIR_score)
 
-    for _, attribute_label in attribute2name.items():
-        groups_time_relevance_scores[attribute_label] = []
 
-    for uid, time_relevance_score in topk_time_relevance_scores.items():
-        attr_value = user2attribute[uid]
-        attr_name = attribute2name[attr_value]
-        groups_time_relevance_scores[attr_name].append(time_relevance_score)
-        groups_time_relevance_scores["Overall"].append(time_relevance_score)
+    for attribute_label, group_scores in groups_LIR_scores.items():
+         avg_groups_LIR[attribute_label] = np.array(group_scores).mean()
 
-    for attribute_label, group_time_relevance_scores in groups_time_relevance_scores.items():
-        avg_groups_time_relevance[attribute_label] = np.array(group_time_relevance_scores).mean()
-
-    avg_groups_time_relevance["Overall"] = np.array(groups_time_relevance_scores["Overall"]).mean()
-
-    time_relevance = edict(
-        avg_groups_time_relevance=avg_groups_time_relevance,
-        groups_time_relevance_scores=groups_time_relevance_scores,
+    LIR = edict(
+        avg_groups_LIR=avg_groups_LIR,
+        groups_LIR_scores=groups_LIR_scores,
     )
 
-    return time_relevance
+    return LIR
 
-#Extract the value of ES for the given user item path from the ES_matrix
-def explanation_serendipity_single(path_data, path):
+#Extract the value of SEP for the given user item path from the SEP_matrix
+def SEP_single(path_data, path):
     related_entity_type, related_entity_id = get_related_entity(path)
-    explanation_serendipity = path_data.ES_matrix[related_entity_type][related_entity_id]
-    return explanation_serendipity
+    SEP = path_data.SEP_matrix[related_entity_type][related_entity_id]
+    return SEP
 
 
-def topks_explanation_serendipity(path_data):
-    explanation_serendipity_topk = {}
+def topks_SEP(path_data):
+    SEP_topk = {}
 
     # Precompute entity distribution
-    exp_serendipity_matrix = path_data.ES_matrix
+    exp_serendipity_matrix = path_data.SEP_matrix
 
     #Measure explanation serendipity for topk
     for uid in path_data.test_labels:
-        explanation_serendipity_single_topk = []
+        SEP_single_topk = []
         if uid not in path_data.uid_topk: continue
         for pid in path_data.uid_topk[uid]:
-            if pid not in path_data.uid_pid_explanation[uid]:
+            if pid not in path_data.uid_pid_explaination[uid]:
                 #print("strano 2")
                 continue
-            path = path_data.uid_pid_explanation[uid][pid]
+            path = path_data.uid_pid_explaination[uid][pid]
             related_entity_type, related_entity_id = get_related_entity(path)
-            explanation_serendipity = exp_serendipity_matrix[related_entity_type][related_entity_id]
-            explanation_serendipity_single_topk.append(explanation_serendipity)
-        if len(explanation_serendipity_single_topk) == 0: continue
-        explanation_serendipity_topk[uid] = np.array(explanation_serendipity_single_topk).mean()
-    return explanation_serendipity_topk
+            SEP = exp_serendipity_matrix[related_entity_type][related_entity_id]
+            SEP_single_topk.append(SEP)
+        if len(SEP_single_topk) == 0: continue
+        SEP_topk[uid] = np.array(SEP_single_topk).mean()
+    return SEP_topk
 
 
-def avg_explanation_serendipity(path_data, attribute_name="Gender"):
-    topks_explanation_serendipity_scores = topks_explanation_serendipity(path_data)
-    if attribute_name == "Gender":
-        user2attribute, attribute2name = get_user2gender(path_data.dataset_name)
-    elif attribute_name == "Age":
-        user2attribute, attribute2name = get_user2age()
-    elif attribute_name == "Occupation":
-        user2attribute, attribute2name = get_user2occupation()
-    elif attribute_name == None:
-        pass
-    else:
-        print("The attribute selected doesn't exist.")
-        return
-    avg_groups_explanation_serendipity = {}
-    groups_explanation_serendipity_scores = {"Overall": []}
+def avg_SEP(path_data):
+    uid_SEP = topks_SEP(path_data)
+    attribute_list = get_attribute_list(path_data.dataset_name)
+    avg_groups_SEP = {}
+    groups_SEP_scores = {}
+    for attribute in attribute_list.keys():
+        if "Overall" not in groups_SEP_scores:
+            groups_SEP_scores["Overall"] = []
+        for _, attribute_label in attribute_list[attribute][1].items():
+            groups_SEP_scores[attribute_label] = []
 
-    for _, attribute_label in attribute2name.items():
-        groups_explanation_serendipity_scores[attribute_label] = []
+    for uid, SEP_score in uid_SEP.items():
+        for attribute in attribute_list.keys():
+            if uid not in attribute_list[attribute][0]: continue
+            attr_value = attribute_list[attribute][0][uid]
+            if attr_value not in attribute_list[attribute][1]: continue #Few users may have the attribute missing (LASTFM)
+            attr_name = attribute_list[attribute][1][attr_value]
+            groups_SEP_scores[attr_name].append(SEP_score)
+        groups_SEP_scores["Overall"].append(SEP_score)
 
-    for uid, explanation_serendipity in topks_explanation_serendipity_scores.items():
-        attr_value = user2attribute[uid]
-        attr_name = attribute2name[attr_value]
-        groups_explanation_serendipity_scores[attr_name].append(explanation_serendipity)
-        groups_explanation_serendipity_scores["Overall"].append(explanation_serendipity)
+    for attribute_label, group_scores in groups_SEP_scores.items():
+        avg_groups_SEP[attribute_label] = np.array(group_scores).mean()
 
-    for attribute_label, group_explanation_serendipity_scores in groups_explanation_serendipity_scores.items():
-        avg_groups_explanation_serendipity[attribute_label] = np.array(
-            group_explanation_serendipity_scores).mean()
-
-    avg_groups_explanation_serendipity["Overall"] = np.array(groups_explanation_serendipity_scores["Overall"]).mean()
     serendipity_results = edict(
-        avg_groups_explanation_serendipity=avg_groups_explanation_serendipity,
-        groups_explanation_serendipity_scores=groups_explanation_serendipity_scores,
+        avg_groups_SEP=avg_groups_SEP,
+        groups_SEP_scores=groups_SEP_scores,
     )
     return serendipity_results
 
-def print_expquality_metrics(avg_groups_time_relevance, avg_groups_explanation_serendipity, avg_groups_explanation_diversity):
-    print("\nExplanation Quality:")
-    print("Average time relevance after Male: {:.3f} | Female: {:.3f} | Overall: {:.3f}".format(
-        avg_groups_time_relevance["Male"],
-        avg_groups_time_relevance["Female"],
-        avg_groups_time_relevance["Overall"],
-    ))
-    print("Average explanation serendipity after Male: {:.3f} | Female: {:.3f} | Overall: {:.3f}".format(
-        avg_groups_explanation_serendipity["Male"],
-        avg_groups_explanation_serendipity["Female"],
-        avg_groups_explanation_serendipity["Overall"],
-    ))
-    print("Average diversity after Male: {:.3f} | Female: {:.3f} | Overall: {:.3f}".format(
-        avg_groups_explanation_diversity["Male"],
-        avg_groups_explanation_diversity["Female"],
-        avg_groups_explanation_diversity["Overall"],
-    ))
-    print("\n")
+def print_expquality_metrics(dataset_name, avg_groups_LIR, avg_groups_SEP, avg_groups_ETD):
+    attribute_list = get_attribute_list(dataset_name)
+    metric_values = {"LIR": avg_groups_LIR, "SEP": avg_groups_SEP, "ETD": avg_groups_ETD}
+    print("\n---Explanation Quality---")
+    print("Average for the entire user base:", end=" ")
+    for metric, values in metric_values.items():
+        print("{}: {:.3f}".format(metric, values["Overall"]), end= " | ")
+    print("")
+
+    for attribute_category, values in attribute_list.items():
+        attributes = values[1].values()
+        print("\n-Statistic with user grouped by {} attribute".format(attribute_category))
+        for attribute in attributes:
+            print("{} group".format(attribute), end=" ")
+            for metric, values in metric_values.items():
+                print("{}: {:.3f}".format(metric, values[attribute]), end=" | ")
+            print("")
+

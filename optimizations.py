@@ -1,78 +1,58 @@
-from myutils import get_rec_pid, get_path_type, PATH_TYPES
+from myutils import get_rec_pid, get_path_type
 from metrics import *
 
-def sort_by_ETR(path_full):
-    return explanation_time_relevance_single(path_full[2])
+def sort_by_LIR(path_full):
+    return LIR_single(path_full[2])
 
-def sort_by_ES(path_full):
-    return explanation_serendipity_single(path_full[2])
+def sort_by_SEP(path_full):
+    return SEP_single(path_full[2])
 
-# Soft optimization ETR, for every user topk predicted by the baseline,
-# get the predicted paths for every item and change the explanation according to ETR motivations
-def soft_optimization_ETR(path_data):
+# Soft optimization LIR, for every user topk predicted by the baseline,
+# get the predicted paths for every item and change the explanation according to LIR motivations
+def soft_optimization_LIR(path_data):
     pred_paths = path_data.pred_paths
     for uid, topk in path_data.uid_topk.items():
 
         #Retrive topk explainations without changin the selected pids
         for pid in topk:
-            pred_paths[uid][pid].sort(key=lambda x: explanation_time_relevance_single(path_data, x[-1]), reverse=True)
+            pred_paths[uid][pid].sort(key=lambda x: LIR_single(path_data, x[-1]), reverse=True)
             path_data.uid_pid_explaination[uid][pid] = pred_paths[uid][pid][0][-1]
 
-# Soft optimization ETR, for every user topk predicted by the baseline,
-# get the predicted paths for every item and change the explanation according to ES motivations
-def soft_optimization_ES(path_data):
+# Soft optimization LIR, for every user topk predicted by the baseline,
+# get the predicted paths for every item and change the explanation according to SEP motivations
+def soft_optimization_SEP(path_data):
     pred_path = path_data.pred_paths
 
     for uid, topk in path_data.uid_topk.items():
 
         #Retrive topk explainations without changin the selected pids
         for pid in topk:
-            pred_path[uid][pid].sort(key=lambda x: explanation_serendipity_single(path_data, x[-1]), reverse=True)
+            pred_path[uid][pid].sort(key=lambda x: SEP_single(path_data, x[-1]), reverse=True)
             path_data.uid_pid_explaination[uid][pid] = pred_path[uid][pid][0][-1]
 
 
 
-def soft_optimization_ED(path_data):
+def soft_optimization_ETD(path_data):
     pred_path = path_data.pred_paths
-
     for uid, topk in path_data.uid_topk.items():
         path_data.uid_pid_explaination[uid] = {}
-        path_took = set()
-        path_type_freq = [[path_type, 0] for path_type in PATH_TYPES[path_data.dataset_name]]
+        ptype_seen = set()
         for pid in topk:
-            for path in pred_path[uid][pid]:
-                path_type = get_path_type(path[-1])
-                for t in path_type_freq:
-                    if t[0] == path_type:
-                        t[1] += 1
-            path_type_freq.sort(key=lambda x: x[1])
-            #Try to pick the most number of different paths
-            path_took_len = len(path_took)
-            for t in path_type_freq:
-                type = t[0]
-                count = t[1]
-                if type in path_took: continue
-                #Search for the first path of the new type
-                for path in pred_path[uid][pid]:
-                    if get_path_type(path[-1]) == type:
-                        path_data.uid_pid_explaination[uid][pid] = path[-1]
-                        path_took.add(type)
-                    if pid in path_data.uid_pid_explaination[uid]:
-                        break
-            # If is true this mean we haven't found a good new path, so we took the most repeted infrequent
-            if path_took_len == len(path_took):
-                for t in path_type_freq:
-                    type = t[0]
-                    count = t[1]
-                    # Search for the first path of the new type
-                    for path in pred_path[uid][pid]:
-                        if get_path_type(path[-1]) == type:
-                            path_data.uid_pid_explaination[uid][pid] = path[-1]
-                        if pid in path_data.uid_pid_explaination[uid]:
-                            break
+            curr_size = len(path_data.uid_pid_explaination[uid])
+            current_item_pred_paths = pred_path[uid][pid]
+            current_item_pred_paths.sort(key=lambda x: x[1]) #Sort for probability
+            for path in current_item_pred_paths:
+                ptype = get_path_type(path[-1])
+                if ptype not in ptype_seen:
+                    path_data.uid_pid_explaination[uid][pid] = path[-1]
+                    ptype_seen.add(ptype)
+                    break
+                    # No different path have been found
+            if curr_size == len(path_data.uid_pid_explaination[uid]):
+                path_data.uid_pid_explaination[uid][pid] = current_item_pred_paths[0][-1]
 
-#ETR Alpha optimization
-def optimize_ETR(path_data, alpha):
+#LIR Alpha optimization
+def optimize_LIR(path_data, alpha):
     pred_path = path_data.pred_paths
 
     #Pred_paths {uid: {pid: [[path_score, path_prob_path], ..., [path_score, path_prob_path]], ...,
@@ -86,7 +66,7 @@ def optimize_ETR(path_data, alpha):
         for pid, path_list in pid_list.items():
             candidates.extend(path_list)
 
-        candidates.sort(key=lambda candidate: (candidate[0] * (1-alpha)) + (explanation_time_relevance_single(path_data, candidate[-1]) * alpha), reverse=True)
+        candidates.sort(key=lambda candidate: (candidate[0] * (1-alpha)) + (LIR_single(path_data, candidate[-1]) * alpha), reverse=True)
 
         #Pick the best items
         for candidate in candidates:
@@ -97,7 +77,7 @@ def optimize_ETR(path_data, alpha):
             if len(best_candidates) == 10: break
 
         #if len(best_candidates) < 10:
-        #    print("LESS THAN 10!")
+        #    print("LSEPS THAN 10!")
         #Reorder topk by path_score
         best_candidates.sort(key=lambda candidate: candidate[0],
                              reverse=True)
@@ -105,8 +85,8 @@ def optimize_ETR(path_data, alpha):
         path_data.uid_topk[uid] = [get_rec_pid(candidate) for candidate in best_candidates]
         path_data.uid_pid_explaination[uid] = {get_rec_pid(candidate): candidate[-1] for candidate in best_candidates}
 
-#ES Alpha optimization
-def optimize_ES(path_data, alpha):
+#SEP Alpha optimization
+def optimize_SEP(path_data, alpha):
     pred_paths = path_data.pred_paths
 
     for uid, pid_list in pred_paths.items():
@@ -118,7 +98,7 @@ def optimize_ES(path_data, alpha):
             path_list.sort(key=lambda x: x[1], reverse=True)
             candidates.extend(path_list)
 
-        candidates.sort(key=lambda x: (x[0] * (1-alpha)) + (explanation_serendipity_single(path_data, x[-1]) * alpha), reverse=True)
+        candidates.sort(key=lambda x: (x[0] * (1-alpha)) + (SEP_single(path_data, x[-1]) * alpha), reverse=True)
 
         #Pick the best items
         for candidate in candidates:
@@ -129,7 +109,7 @@ def optimize_ES(path_data, alpha):
             if len(best_candidates) == 10: break
 
         #if len(best_candidates) < 10:
-        #    print("LESS THAN 10!")
+        #    print("LSEPS THAN 10!")
 
         #Reorder topk by path_score
         best_candidates.sort(key=lambda candidate: candidate[0],
@@ -138,14 +118,15 @@ def optimize_ES(path_data, alpha):
         path_data.uid_topk[uid] = [get_rec_pid(candidate) for candidate in best_candidates]
         path_data.uid_pid_explaination[uid] = {get_rec_pid(candidate): candidate[-1] for candidate in best_candidates}
 
-#ED Alpha optimization
-def optimize_ED(path_data, alpha):
+#ETD Alpha optimization
+def optimize_ETD(path_data, alpha):
     pred_path = path_data.pred_paths
     for uid, pid_list in pred_path.items():
         candidates = []
         best_candidates = []
         best_candidates_pids = set()
 
+        #Populate candidate list
         for pid, path_list in pid_list.items():
             path_list = pred_path[uid][pid]
             candidates.extend(path_list)
@@ -201,8 +182,8 @@ def optimize_ED(path_data, alpha):
         path_data.uid_topk[uid] = [get_rec_pid(candidate) for candidate in best_candidates]
         path_data.uid_pid_explaination[uid] = {get_rec_pid(candidate): candidate[-1] for candidate in best_candidates}
 
-#ETR+ES Optimization
-def optimize_ETR_ES(path_data, alpha):
+#LIR+SEP Optimization
+def optimize_LIR_SEP(path_data, alpha):
     pred_path = path_data.pred_paths
 
     for uid, pid_list in pred_path.items():
@@ -221,7 +202,7 @@ def optimize_ETR_ES(path_data, alpha):
         for candidate in candidates:
             candidate[0] = (candidate[0] - min_score) / (max_score - min_score)
 
-        candidates.sort(key=lambda x: (x[0] * (1-alpha)) + ((explanation_time_relevance_single(path_data, x[-1]) + explanation_serendipity_single(path_data, x[-1])) * alpha),
+        candidates.sort(key=lambda x: (x[0] * (1-alpha)) + ((LIR_single(path_data, x[-1]) + SEP_single(path_data, x[-1])) * alpha),
                         reverse=True)
 
         # Pick the best items
@@ -233,7 +214,7 @@ def optimize_ETR_ES(path_data, alpha):
             if len(best_candidates) == 10: break
 
         #if len(best_candidates) < 10:
-        #    print("LESS THAN 10!")
+        #    print("LSEPS THAN 10!")
 
         # Reorder topk by path_score
         best_candidates.sort(key=lambda candidate: candidate[0], reverse=True)
@@ -241,7 +222,7 @@ def optimize_ETR_ES(path_data, alpha):
         path_data.uid_topk[uid] = [get_rec_pid(candidate) for candidate in best_candidates]
         path_data.uid_pid_explaination[uid] = {get_rec_pid(candidate): candidate[-1] for candidate in best_candidates}
 
-def optimize_ED_ETR(path_data, alpha):
+def optimize_ETD_LIR(path_data, alpha):
     pred_path = path_data.pred_paths
     for uid, pid_list in pred_path.items():
         candidates = []
@@ -262,7 +243,7 @@ def optimize_ED_ETR(path_data, alpha):
 
         # Sort every path type bin by a mixed score based on explaination time relevance and item relevance
         for bin_type, path_list in bins.items():
-            path_list.sort(key=lambda x: (x[0] * (1-alpha)) + (explanation_time_relevance_single(path_data, x[-1]) * alpha),
+            path_list.sort(key=lambda x: (x[0] * (1-alpha)) + (LIR_single(path_data, x[-1]) * alpha),
                            reverse=True)
 
         ptype_seen = set()
@@ -301,8 +282,8 @@ def optimize_ED_ETR(path_data, alpha):
         path_data.uid_topk[uid] = [get_rec_pid(candidate) for candidate in best_candidates]
         path_data.uid_pid_explaination[uid] = {get_rec_pid(candidate): candidate[-1] for candidate in best_candidates}
 
-#ED+ES Alpha optimization
-def optimize_ED_ES(path_data, alpha):
+#ETD+SEP Alpha optimization
+def optimize_ETD_SEP(path_data, alpha):
     pred_path = path_data.pred_paths
     for uid, pid_list in pred_path.items():
         candidates = []
@@ -323,7 +304,7 @@ def optimize_ED_ES(path_data, alpha):
 
         # Sort every path type bin by a mixed score based on explaination time relevance and item relevance
         for bin_type, path_list in bins.items():
-            path_list.sort(key=lambda x: (x[0] * (1-alpha)) + (explanation_serendipity_single(path_data, x[-1]) * alpha),
+            path_list.sort(key=lambda x: (x[0] * (1-alpha)) + (SEP_single(path_data, x[-1]) * alpha),
                            reverse=True)
 
         ptype_seen = set()
@@ -363,8 +344,8 @@ def optimize_ED_ES(path_data, alpha):
         path_data.uid_topk[uid] = [get_rec_pid(candidate) for candidate in best_candidates]
         path_data.uid_pid_explaination[uid] = {get_rec_pid(candidate): candidate[-1] for candidate in best_candidates}
 
-#ED+ES+ETR Alpha optimization
-def optimize_ED_ES_ETR(path_data, alpha):
+#ETD+SEP+LIR Alpha optimization
+def optimize_ETD_SEP_LIR(path_data, alpha):
     pred_path = path_data.pred_paths
     for uid, pid_list in pred_path.items():
         candidates = []
@@ -386,7 +367,7 @@ def optimize_ED_ES_ETR(path_data, alpha):
         # Sort every path type bin by a mixed score based on explaination time relevance and item relevance
         for bin_type, path_list in bins.items():
             path_list.sort(
-                key=lambda x: (x[0] * (1 - alpha)) + ((explanation_time_relevance_single(path_data, x[-1]) + explanation_serendipity_single(path_data, x[-1])) * alpha),
+                key=lambda x: (x[0] * (1 - alpha)) + ((LIR_single(path_data, x[-1]) + SEP_single(path_data, x[-1])) * alpha),
                 reverse=True)
 
         ptype_seen = set()

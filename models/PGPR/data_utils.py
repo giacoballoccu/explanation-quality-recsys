@@ -7,7 +7,8 @@ import pickle
 from easydict import EasyDict as edict
 import random
 import collections
-from models.PGPR.utils import get_movie_relationships, DATASET_DIR, get_review_uid_kg_uid_mapping, get_product_id_kgid_mapping, get_song_relationships
+from models.PGPR.utils import get_movie_relationships, DATASET_DIR, \
+    get_product_id_kgid_mapping, get_song_relationships, get_uid_to_kgid_mapping
 
 
 class AmazonDataset(object):
@@ -40,6 +41,7 @@ class AmazonDataset(object):
                     user='entities/user.txt.gz',
                     movie='entities/movie.txt.gz',
                     actor='entities/actor.txt.gz',
+                    composer='entities/composer.txt.gz',
                     director='entities/director.txt.gz',
                     producer='entities/producer.txt.gz',
                     production_company='entities/production_company.txt.gz',
@@ -80,7 +82,7 @@ class AmazonDataset(object):
         negative_reviews = 0
         threshold = 3
         id2kgid = get_product_id_kgid_mapping(self.dataset_name)
-        uid2kg_uid = get_review_uid_kg_uid_mapping(self.dataset_name)
+        uid2kg_uid = get_uid_to_kgid_mapping(self.dataset_name)
         for line in self._load_file(self.review_file):
             arr = line.split(' ')
             user_idx = uid2kg_uid[int(arr[0])]
@@ -126,11 +128,12 @@ class AmazonDataset(object):
         if self.dataset_name == "ml1m":
             dataset_dir = DATASET_DIR[self.dataset_name]
             product_relations = edict(
-                    directed_by=('relations/directed_by_m_d.txt.gz', self.director),  # (filename, entity_tail)
+                    directed_by=('relations/directed_by_m_d.txt.gz', self.director),
+                    composed_by=('relations/composed_by_m_c.txt.gz', self.composer),
                     produced_by_company=('relations/produced_by_company_m_pc.txt.gz', self.production_company),
                     produced_by_producer=('relations/produced_by_producer_m_pr.txt.gz', self.producer),
                     starring=('relations/starring_m_a.txt.gz', self.actor),
-                    belong_to=('relations/belong_to_p_ca.txt.gz', self.category),
+                    belong_to=('relations/belong_to_m_ca.txt.gz', self.category),
                     edited_by=('relations/edited_by_m_ed.txt.gz', self.editor),
                     wrote_by=('relations/wrote_by_m_w.txt.gz', self.writter),
                     cinematography=('relations/cinematography_m_ci.txt.gz', self.cinematographer),
@@ -190,7 +193,7 @@ class AmazonDataLoader(object):
         self.dataset = dataset
         self.batch_size = batch_size
         self.review_size = self.dataset.review.size
-        self.product_relations = get_movie_relationships() if dataset == "ml1m" else get_song_relationships()
+        self.product_relations = get_movie_relationships() if dataset.dataset_name == "ml1m" else get_song_relationships()
         self.finished_review_num = 0
         self.reset()
 

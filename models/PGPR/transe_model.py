@@ -26,6 +26,7 @@ class KnowledgeEmbedding(nn.Module):
                 user=edict(vocab_size=dataset.user.vocab_size),
                 movie=edict(vocab_size=dataset.movie.vocab_size),
                 actor=edict(vocab_size=dataset.actor.vocab_size),
+                composer=edict(vocab_size=dataset.composer.vocab_size),
                 director=edict(vocab_size=dataset.director.vocab_size),
                 production_company=edict(vocab_size=dataset.production_company.vocab_size),
                 producer=edict(vocab_size=dataset.producer.vocab_size),
@@ -78,6 +79,9 @@ class KnowledgeEmbedding(nn.Module):
                 cinematography=edict(
                     et='cinematographer',
                     et_distrib=self._make_distrib(dataset.cinematography.et_distrib)),
+                composed_by=edict(
+                    et='composer',
+                    et_distrib=self._make_distrib(dataset.composed_by.et_distrib)),
             )
         elif self.dataset_name == "lastfm":
             self.relations = edict(
@@ -167,7 +171,7 @@ class KnowledgeEmbedding(nn.Module):
             category_idxs = batch_idxs[:, 7]
             director_idxs = batch_idxs[:, 8]
             actor_idxs = batch_idxs[:, 9]
-
+            composer_idxs = batch_idxs[:, 10]
             # user + watched -> movie
             uw_loss, uw_embeds = self.neg_loss('user', 'watched', 'movie', user_idxs, movie_idxs)
             regularizations.extend(uw_embeds)
@@ -185,25 +189,25 @@ class KnowledgeEmbedding(nn.Module):
                                                  producer_idxs)
             if mpr_loss is not None:
                 regularizations.extend(mpr_embeds)
-                loss += mpc_loss
+                loss += mpr_loss
 
             # product + belong_to -> category
-            pc_loss, pc_embeds = self.neg_loss('movie', 'belong_to', 'category', movie_idxs, category_idxs)
-            if pc_loss is not None:
-                regularizations.extend(pc_embeds)
-                loss += pc_loss
+            mca_loss, mca_embeds = self.neg_loss('movie', 'belong_to', 'category', movie_idxs, category_idxs)
+            if mca_loss is not None:
+                regularizations.extend(mca_embeds)
+                loss += mca_loss
 
             # movie + starring -> actor
-            pr2_loss, pr2_embeds = self.neg_loss('movie', 'starring', 'actor', movie_idxs, actor_idxs)
-            if pr2_loss is not None:
-                regularizations.extend(pr2_embeds)
-                loss += pr2_loss
+            ma_loss, ma_embeds = self.neg_loss('movie', 'starring', 'actor', movie_idxs, actor_idxs)
+            if ma_loss is not None:
+                regularizations.extend(ma_embeds)
+                loss += ma_loss
 
             # movie + directed_by -> director
-            pr3_loss, pr3_embeds = self.neg_loss('movie', 'directed_by', 'director', movie_idxs, director_idxs)
-            if pr3_loss is not None:
-                regularizations.extend(pr3_embeds)
-                loss += pr3_loss
+            md_loss, md_embeds = self.neg_loss('movie', 'directed_by', 'director', movie_idxs, director_idxs)
+            if md_loss is not None:
+                regularizations.extend(md_embeds)
+                loss += md_loss
 
             # movie + wrote_by -> writter
             mw_loss, mw_embeds = self.neg_loss('movie', 'wrote_by', 'writter', movie_idxs, writter_idxs)
@@ -223,6 +227,13 @@ class KnowledgeEmbedding(nn.Module):
             if mc_loss is not None:
                 regularizations.extend(mc_embeds)
                 loss += mc_loss
+
+            # movie + cinematography -> cinematographer
+            mco_loss, mco_embeds = self.neg_loss('movie', 'composed_by', 'composer', movie_idxs,
+                                               composer_idxs)
+            if mco_loss is not None:
+                regularizations.extend(mco_embeds)
+                loss += mco_loss
 
         elif self.dataset_name == "lastfm":
             user_idxs = batch_idxs[:, 0]

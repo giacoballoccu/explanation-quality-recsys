@@ -14,7 +14,7 @@ def generate_labels(dataset, mode='train'):
     review_file = '{}/{}.txt.gz'.format(DATASET_DIR[dataset], mode)
     user_products = {}  # {uid: [pid,...], ...}
     id2kgid = get_product_id_kgid_mapping(dataset)
-    uid2kg_uid = get_review_uid_kg_uid_mapping(dataset)
+    uid2kg_uid = get_uid_to_kgid_mapping(dataset)
     with gzip.open(review_file, 'r') as f:
         for line in f:
             line = line.decode('utf-8').strip()

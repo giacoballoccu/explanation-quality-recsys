@@ -64,7 +64,7 @@ def save_pred_labels(folder_path, pred_labels):
         writer = csv.writer(uid_topk)
         writer.writerow(header)
         for uid, topk in pred_labels.items():
-            writer.writerow([uid, ' '.join([str(x) for x in topk])])
+            writer.writerow([uid, ' '.join([str(x) for x in topk[::-1]])])
     uid_topk.close()
 
 def save_pred_explainations(folder_path, pred_paths_top10, pred_labels):
@@ -75,7 +75,7 @@ def save_pred_explainations(folder_path, pred_paths_top10, pred_labels):
           writer = csv.writer(uid_pid_explaination)
           writer.writerow(header)
           for uid, paths in pred_paths_top10.items():
-              for idx, path in enumerate(paths):
+              for idx, path in enumerate(paths[::-1]):
                   path_explaination = []
                   for tuple in path:
                       for x in tuple:

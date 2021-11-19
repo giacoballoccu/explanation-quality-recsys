@@ -32,7 +32,7 @@ class KnowledgeGraph(object):
     def _load_entities(self, dataset):
         print('Load entities...')
         num_nodes = 0
-        for entity in get_entities(dataset):
+        for entity in get_entities(dataset.dataset_name):
             self.G[entity] = {}
             vocab_size = getattr(dataset, entity).vocab_size
             for eid in range(vocab_size):
@@ -77,7 +77,7 @@ class KnowledgeGraph(object):
        #     f.writelines([' '.join(words) + '\n' for words in all_removed_words])
 
     def _load_knowledge(self, dataset):
-        relationships = get_movie_relations() if dataset.dataset_name == "ml1m" else get_song_relationships()
+        relationships = get_movie_relationships() if dataset.dataset_name == "ml1m" else get_song_relationships()
         for relation in relationships:
             print('Load knowledge {}...'.format(relation))
             data = getattr(dataset, relation).data
