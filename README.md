@@ -120,7 +120,7 @@ You can define which optimization to use, the alpha value and more using these f
 
 ## Double metric weighted optimization heatmap.
 
-![Heatmap double metric weighted optimization](https://ibb.co/nCpBt5n)
+[![Double metric weighted optimization heatmap.](https://www.linkpicture.com/q/sens-attributes-doubleopt-interplay-heatmap-1_2.png)](https://www.linkpicture.com/view.php?img=LPic61f7ffcc930d7633188407)
 
 ## Soft-Optimizations Results.
 
