@@ -1,4 +1,4 @@
-# Incorporating Quality of Explanations in Recommender Systems with Knowledge Graphs
+# Post Processing Explanations in Path Reasoning Recommender Systems with Knowledge Graphs
 This repository contains the source code of the SIGIR 2022 paper "Post Processing Recommender Systems with Knowledge Graphs for Recency, Popularity, and Diversity of Explanations".
 
 ![Pipeline Summary](/SIGIR22-pipeline-summary.png)
@@ -13,10 +13,10 @@ This framework can be trasfered to any Path Reasoning Explainable Recommender Sy
 The other baselines are located in the other repository: [https://anonymous.4open.science/r/KA-RC-Baselines-0652/README.md](https://anonymous.4open.science/r/KA-RC-Baselines-0652/README.md)
 
 # Table of Content
-- [Dataset](#dataset)
+- [Datasets](#datasets)
 - [Requirements](#requirements)
-- [Paths](#paths)
-  * [Requirements for Alpha Optimization](#requirements-for-alpha-optimization)
+- [Precomputed Paths](#precomputed-paths)
+  * [Requirements for Weigthed Optimization](#requirements-for-weigthed-optimization)
     + [pred_paths.csv](#pred-pathscsv)
   * [Requirements for Soft Optimization and Baseline Evaluation](#requirements-for-soft-optimization-and-baseline-evaluation)
     + [uid_topk.csv](#uid-topkcsv)
@@ -25,14 +25,9 @@ The other baselines are located in the other repository: [https://anonymous.4ope
 - [Supplementary Material](#supplementary-material)
   * [Double metric weighted optimization heatmap.](#double-metric-weighted-optimization-heatmap)
   * [Soft-Optimizations Results.](#soft-optimizations-results)
-    + [ML1M](#ml1m)
-    + [LASTFM](#lastfm)
   * [Age Fairness (NDCG, LIR, SEP, ETD).](#age-fairness--ndcg--lir--sep--etd-)
-    + [ML1M](#ml1m-1)
-    + [LASTFM](#lastfm-1)
 - [References](#references)
 
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 
 # Datasets
@@ -55,15 +50,18 @@ pip install -r requirements.txt
 ```
 
 # Precomputed Paths
-In order to apply an optimization or measure a baseline with our proposed metrics you will need to store the paths in csv files with "," as delimiter.  
+In order to apply an optimization or measure a baseline with our proposed metrics you will need to store the predicted paths in csv files with "," as delimiter. In general we distinguish 3 files:
+- pred_paths.csv: Which contains all the extracted paths for users (Candidate Selection Step).  
+- uid_topk: Which containes the top-k recommended items for every user.  
+- uid_pid_explanation.csv: Which containes the top-k recommended items and the associated explaination path.  
 
-If you want to reproduce the results you can download the already computed paths from here: [ML1M](https://drive.google.com/file/d/1b6HgNJvHGPZs6q3PMaMBHT89pW46Lw7J/view?usp=sharing) [LAST-FM](https://drive.google.com/file/d/1gf9TyRN39Tc0I8immOzn9FK3e14pUpvi/view?usp=sharing) paths. The path files must stay in the following location: "\<main-project-dir\>/paths/agent-topk=\<your-agent-topk\>/\<dataset-name\>/"
+**Precomputed Paths**: If you want to reproduce the results you can download the already computed paths from here: [ML1M](https://drive.google.com/file/d/1b6HgNJvHGPZs6q3PMaMBHT89pW46Lw7J/view?usp=sharing) [LAST-FM](https://drive.google.com/file/d/1gf9TyRN39Tc0I8immOzn9FK3e14pUpvi/view?usp=sharing) paths. The path files must stay in the following location: "\<main-project-dir\>/paths/agent-topk=\<your-agent-topk\>/\<dataset-name\>/"
 
-If you wish to apply in-train mitigation on the baseline, produce more paths or change the metaparameters you can retrain it and produce the paths, they will be automatically saved using the path_extractor.py file.  
+**Retrain Original Model**: If you wish to apply in-train mitigation on the baseline, produce more paths or change the metaparameters you can retrain it and produce the paths, they will be automatically saved using the path_extractor.py file.  
 
-You can downloaded the precomputed TransE embeddings, agent-policy and agent cpkt used for the experiments from there: [ML1M](https://drive.google.com/file/d/1HWp7I-0qW1XesUE_WZ6nZ0DHFALnfRrJ/view?usp=sharing) [LAST-FM](https://drive.google.com/file/d/17EUgh299U8y0bqPYT39sdMzhjjzlahSG/view?usp=sharing). This files must stay in the following location: "\<main-project-dir\>/models/PGPR/tmp/\<dataset-name\>"  
+**Precomputed TransE Embeddings**: You can downloaded the precomputed TransE embeddings, agent-policy and agent cpkt used for the experiments from there: [ML1M](https://drive.google.com/file/d/1HWp7I-0qW1XesUE_WZ6nZ0DHFALnfRrJ/view?usp=sharing) [LAST-FM](https://drive.google.com/file/d/17EUgh299U8y0bqPYT39sdMzhjjzlahSG/view?usp=sharing). This files must stay in the following location: "\<main-project-dir\>/models/PGPR/tmp/\<dataset-name\>"  
 
-Instead if you wish to use this framework with other path-based explanable algorithm make sure to extract the paths and have them on this form:
+**Trasfer the framework to other baselines**: Instead if you wish to use this framework with other path-based explanable algorithm make sure to extract the paths and have them on this form:
 
 ## Requirements for Weigthed Optimization
 In order to performe the reranking you would need a pred_path.csv. Files must follow this format:    
@@ -144,7 +142,9 @@ More flags can be find in main.py args.
 |D-PGPR |   0.15 | 1.13 | 0.56 | 0.40 | 0.17  |
 
 ## Age Fairness (NDCG, LIR, SEP, ETD).
+
 Average difference between age groups for the 3 metrics.
+
 ### ML1M
 |   |  delta NDCG| delta LIR| delta SEP| delta ETD|
 |---|---|---|---|---|
