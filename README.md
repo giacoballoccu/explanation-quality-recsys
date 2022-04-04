@@ -76,9 +76,11 @@ In order to performe the reranking you would need a pred_path.csv. Files must fo
 |...|...|...|...|...|
 
 
-The path_score is usually computed using KG embedding tecniques.  
-The path_prob is not mandatory, if your baseline doesn't produce probability just use -1 as a placeholder, since our reranking doesn't use it.  
-The path must have len 3 in order for our algorithm to individuate the interaction, the related entity and recommendation properly.  
+The **path_score** is usually computed using KG embedding tecniques.  
+
+The **path_prob** is not mandatory, if your baseline doesn't produce probability just use -1 as a placeholder, since our reranking doesn't use it.  
+
+The **path must have length of 3** in order for our algorithm to individuate the interaction, the related entity and recommendation properly.  
 
 ## Requirements for Soft Optimization and Baseline Evaluation
 If you want to perfome also the evaluation of the baseline using our proposed metric or you want to apply a soft optimization you will need also a:
