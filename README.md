@@ -13,6 +13,7 @@ This framework can be trasfered to any Path Reasoning Explainable Recommender Sy
 The other baselines are located in the other repository: [https://anonymous.4open.science/r/KA-RC-Baselines-0652/README.md](https://anonymous.4open.science/r/KA-RC-Baselines-0652/README.md)
 
 # Table of Content
+- [Acknowledgement](#acknowledgement)
 - [Datasets](#datasets)
 - [Requirements](#requirements)
 - [Precomputed Paths](#precomputed-paths)
@@ -25,9 +26,25 @@ The other baselines are located in the other repository: [https://anonymous.4ope
 - [Supplementary Material](#supplementary-material)
   * [Double metric weighted optimization heatmap.](#double-metric-weighted-optimization-heatmap)
   * [Soft-Optimizations Results.](#soft-optimizations-results)
+    + [ML1M](#ml1m)
+    + [LASTFM](#lastfm)
   * [Age Fairness (NDCG, LIR, SEP, ETD).](#age-fairness--ndcg--lir--sep--etd-)
+    + [ML1M](#ml1m-1)
+    + [LASTFM](#lastfm-1)
 - [References](#references)
 
+
+# Acknowledgement
+Any scientific publications that use our datasets should cite the following paper as the reference:
+```
+citation coming soon 
+```
+
+Nobody guarantees the correctness of the data, its suitability for any particular purpose, or the validity of results based on the use of the data set. The data set may be used for any research purposes under the following conditions:
+* The user must acknowledge the use of the data set in publications resulting from the use of the data set.
+* The user may not redistribute the data without separate permission.
+* The user may not try to deanonymise the data.
+* The user may not use this information for any commercial or revenue-bearing purposes without first obtaining permission from us.
 
 
 # Datasets
