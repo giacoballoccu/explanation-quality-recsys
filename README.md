@@ -10,7 +10,7 @@ explanation properties, and evaluated on recommendation utility, explanation qua
 
 This framework can be trasfered to any Path Reasoning Explainable Recommender Systems, provided that you save the predicted paths candidates in csv files standardized as shown in the upcoming sections. 
 
-The other baselines are located in the other repository: [https://anonymous.4open.science/r/KA-RC-Baselines-0652/README.md](https://anonymous.4open.science/r/KA-RC-Baselines-0652/README.md)
+The other baselines are located in the other repository: [Knowlede-Aware-Recommender-Systems-Baselines](https://github.com/giacoballoccu/Knowlede-Aware-Recommender-Systems-Baselines)
 
 # Table of Content
 - [Acknowledgement](#acknowledgement)
