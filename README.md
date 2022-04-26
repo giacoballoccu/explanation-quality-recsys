@@ -1,5 +1,5 @@
 # Post Processing Explanations in Path Reasoning Recommender Systems with Knowledge Graphs
-This repository contains the source code of the SIGIR 2022 paper "Post Processing Recommender Systems with Knowledge Graphs for Recency, Popularity, and Diversity of Explanations".
+This repository contains the source code of the SIGIR 2022 paper ["Post Processing Recommender Systems with Knowledge Graphs for Recency, Popularity, and Diversity of Explanations"](https://arxiv.org/abs/2204.11241).
 
 ![Pipeline Summary](/SIGIR22-pipeline-summary.png)
 
