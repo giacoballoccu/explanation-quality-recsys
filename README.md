@@ -37,7 +37,12 @@ The other baselines are located in the other repository: [Knowlede-Aware-Recomme
 # Acknowledgement
 Any scientific publications that use our datasets should cite the following paper as the reference:
 ```
-citation coming soon 
+@article{balloccu2022post,
+  title={Post Processing Recommender Systems with Knowledge Graphs for Recency, Popularity, and Diversity of Explanations},
+  author={Balloccu, Giacomo and Boratto, Ludovico and Fenu, Gianni and Marras, Mirko},
+  journal={arXiv preprint arXiv:2204.11241},
+  year={2022}
+}
 ```
 
 Nobody guarantees the correctness of the data, its suitability for any particular purpose, or the validity of results based on the use of the data set. The data set may be used for any research purposes under the following conditions:
