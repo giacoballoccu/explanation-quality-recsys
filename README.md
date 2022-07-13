@@ -1,5 +1,5 @@
 # Post Processing Explanations in Path Reasoning Recommender Systems with Knowledge Graphs
-This repository contains the source code of the SIGIR 2022 paper ["Post Processing Recommender Systems with Knowledge Graphs for Recency, Popularity, and Diversity of Explanations"](https://arxiv.org/abs/2204.11241).
+This repository contains the source code of the SIGIR 2022 paper ["Post Processing Recommender Systems with Knowledge Graphs for Recency, Popularity, and Diversity of Explanations"](https://dl.acm.org/doi/10.1145/3477495.3532041).
 
 ![Pipeline Summary](/SIGIR22-pipeline-summary.png)
 
@@ -37,11 +37,22 @@ The other baselines are located in the other repository: [Knowlede-Aware-Recomme
 # Acknowledgement
 Any scientific publications that use our datasets should cite the following paper as the reference:
 ```
-@article{balloccu2022post,
-  title={Post Processing Recommender Systems with Knowledge Graphs for Recency, Popularity, and Diversity of Explanations},
-  author={Balloccu, Giacomo and Boratto, Ludovico and Fenu, Gianni and Marras, Mirko},
-  journal={arXiv preprint arXiv:2204.11241},
-  year={2022}
+@inproceedings{10.1145/3477495.3532041,
+author = {Balloccu, Giacomo and Boratto, Ludovico and Fenu, Gianni and Marras, Mirko},
+title = {Post Processing Recommender Systems with Knowledge Graphs for Recency, Popularity, and Diversity of Explanations},
+year = {2022},
+isbn = {9781450387323},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3477495.3532041},
+doi = {10.1145/3477495.3532041},
+abstract = {Existing explainable recommender systems have mainly modeled relationships between recommended and already experienced products, and shaped explanation types accordingly (e.g., movie "x" starred by actress "y" recommended to a user because that user watched other movies with "y" as an actress). However, none of these systems has investigated the extent to which properties of a single explanation (e.g., the recency of interaction with that actress) and of a group of explanations for a recommended list (e.g., the diversity of the explanation types) can influence the perceived explaination quality. In this paper, we conceptualized three novel properties that model the quality of the explanations (linking interaction recency, shared entity popularity, and explanation type diversity) and proposed re-ranking approaches able to optimize for these properties. Experiments on two public data sets showed that our approaches can increase explanation quality according to the proposed properties, fairly across demographic groups, while preserving recommendation utility. The source code and data are available at https://github.com/giacoballoccu/explanation-quality-recsys.},
+booktitle = {Proceedings of the 45th International ACM SIGIR Conference on Research and Development in Information Retrieval},
+pages = {646–656},
+numpages = {11},
+keywords = {knowledge graphs, fairness, recommender systems, explainability},
+location = {Madrid, Spain},
+series = {SIGIR '22}
 }
 ```
 
