@@ -135,8 +135,11 @@ If you wish to execute the adapted PGPR baseline \[1\] refer to the original doc
 To perfome the optimization:
 
 ```
-python main.py --dataset=dataset_name --opt=opt_name --metrics=metric/s_to_opt
+python main.py --dataset=dataset_name --opt=opt_name
 ```
+
+Where opt is one of: ``` ["softETD", "softSEP", "softLIR", "ETDopt", "SEPopt", "LIRopt", "ETD_SEP_opt", "ETD_LIR_opt", "SEP_LIR_opt", "ETD_SEP_LIR_opt"] ```
+
 
 You can define which optimization to use, the alpha value and more using these flags:   
 - ``` --dataset```, string, dataset to use one among {ml1m, lastfm}    
