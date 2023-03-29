@@ -144,9 +144,8 @@ Where opt is one of: ``` ["softETD", "softSEP", "softLIR", "ETDopt", "SEPopt", "
 You can define which optimization to use, the alpha value and more using these flags:   
 - ``` --dataset```, string, dataset to use one among {ml1m, lastfm}    
 - ``` --agent_topk```, string, determine which agent top-k folder from which take the predicted paths.
-- ``` --opt```, string, determine which type of optimization one among {soft, weighted}
+- ``` --opt```, string, determine which type of optimization one among {soft, weighted}, you can specify one of the softs using one among ```{"softETD", "softSEP", "softLIR"}``` and as alpha one among ```{"ETDopt", "SEPopt", "LIRopt", "ETD_SEP_opt", "ETD_LIR_opt", "SEP_LIR_opt", "ETD_SEP_LIR_opt"}```
 - ``` --alpha```, float, used only by weighted optimization, determine the weighting coefficient for the explanation metric in reranking process.
-- ```--metrics'```, list, determine which metric optimize, possible values are: {LIR, SEP, ETD, [ETD, LIR], [ETD, SEP], [SEP, LIR], [SEP, LIR, ETD]}
 - ```--eval_baseline'```, boolean, determine if calculate the stats for baseline or not.  
 - ```--log_enabled'```, boolean, if true save outputs in log files instead of printing results.
 
