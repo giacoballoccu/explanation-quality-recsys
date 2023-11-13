@@ -70,7 +70,7 @@ The datasets were augmented using the Knowledge Graph completion extracted from 
 
 The datasets are preprocessed with the dataset_mapper.py in order to compute various mappings, clean the data and formatting it for being read from our baseline model. All the details are avaiable in the manuscript.
 
-You can download the preprocessed dataset directly from there: [preprocessed-datasets](https://drive.google.com/file/d/1yRaGIsAkxrifhdusC7rvdo6zgzJ0K0D6/view?usp=sharing). The datasets folder must stay in "./\<main-project-folder\>/" 
+You can download the preprocessed dataset directly from there: [preprocessed-datasets](https://drive.google.com/file/d/1P2TOG_6Rrmsp6oK9aH3mNSb_i3TLF-d1/view?usp=sharing). The datasets folder must stay in "./\<main-project-folder\>/" 
 
 If you wish to download the original datasets you can find them there [ML1M](https://grouplens.org/datasets/movielens/) [LAST-FM](http://www.cp.jku.at/datasets/LFM-1b/).
 
